@@ -1,9 +1,7 @@
+import Welcome from './pages/Welcome';
+
 function App() {
-  return (
-    <div>
-      <h1>Ordering App</h1>
-    </div>
-  );
+  return <Welcome />;
 }
 
 export default App;
