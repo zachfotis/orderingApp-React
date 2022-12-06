@@ -20,7 +20,14 @@ interface ReducerStateProps {
 }
 
 interface ReducerActionProps {
-  type: 'SET_FIRST_NAME' | 'SET_LAST_NAME' | 'SET_EMAIL' | 'SET_PHONE' | 'SET_ADDRESS' | 'SET_COORDS';
+  type:
+    | 'SET_FIRST_NAME'
+    | 'SET_LAST_NAME'
+    | 'SET_EMAIL'
+    | 'SET_PHONE'
+    | 'SET_ADDRESS'
+    | 'SET_COORDS_LAT'
+    | 'SET_COORDS_LNG';
   payload: string;
 }
 
@@ -46,8 +53,10 @@ const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
       return { ...state, phone: action.payload };
     case 'SET_ADDRESS':
       return { ...state, address: action.payload };
-    case 'SET_COORDS':
-      return { ...state, coords: action.payload };
+    case 'SET_COORDS_LAT':
+      return { ...state, coords_lat: action.payload };
+    case 'SET_COORDS_LNG':
+      return { ...state, coords_lng: action.payload };
     default:
       return state;
   }

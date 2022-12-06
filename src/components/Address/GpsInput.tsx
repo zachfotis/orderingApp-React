@@ -4,8 +4,7 @@ import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 
 function GpsInput() {
-  const [coords, setCoords] = useState({ lat: 0, lng: 0 });
-  const { setIsLoading } = useDeliveryContext();
+  const { setIsLoading, userInfoDispatch } = useDeliveryContext();
 
   const getLocation = () => {
     if (!navigator.geolocation) {
@@ -15,9 +14,13 @@ function GpsInput() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setIsLoading(false);
-          setCoords({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
+          userInfoDispatch({
+            type: 'SET_COORDS_LAT',
+            payload: String(position.coords.latitude),
+          });
+          userInfoDispatch({
+            type: 'SET_COORDS_LNG',
+            payload: String(position.coords.longitude),
           });
         },
         () => {
@@ -40,11 +43,6 @@ function GpsInput() {
       <div className="flex justify-center items-center gap-2">
         <p>Εντοπισμός τοποθεσίας</p>
         <ArrowIcon />
-        {coords.lat !== 0 && coords.lng !== 0 && (
-          <p className="text-xs text-gray-500">
-            {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
-          </p>
-        )}
       </div>
     </div>
   );

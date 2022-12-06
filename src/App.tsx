@@ -3,7 +3,7 @@ import FirebaseProvider from './context/FirebaseContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Welcome from './pages/Welcome';
-import NewAddress from './components/NewAddress';
+import NewAddress from './components/Address/Address';
 import DeliveryProvider from './context/DeliveryContext';
 
 function App() {

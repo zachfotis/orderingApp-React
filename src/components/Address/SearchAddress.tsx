@@ -8,7 +8,12 @@ import { MdPlace } from 'react-icons/md';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import GpsInput from './GpsInput';
 
-function AddressInput() {
+interface SearchAddressProps {
+  showSearch: (value: boolean) => void;
+  showConfirmAddress: (value: boolean) => void;
+}
+
+function SearchAddress({ showSearch, showConfirmAddress }: SearchAddressProps) {
   const [newAddress, setNewAddress] = useState('');
   const [proposedAddresses, setProposedAddresses] = useState([]);
   const { userInfoDispatch } = useDeliveryContext();
@@ -32,6 +37,8 @@ function AddressInput() {
       type: 'SET_ADDRESS',
       payload: selectedAddress,
     });
+    showSearch(false);
+    showConfirmAddress(true);
   };
 
   return (
@@ -76,4 +83,4 @@ function AddressInput() {
     </div>
   );
 }
-export default AddressInput;
+export default SearchAddress;
