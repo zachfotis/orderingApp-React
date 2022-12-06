@@ -10,6 +10,7 @@ module.exports = {
         greyLight: 'rgb(155, 155, 155)',
         greyDark: '#333',
         blue: '#3a63ac',
+        green: 'rgb(0, 188, 139)',
       },
     },
     fontFamily: {

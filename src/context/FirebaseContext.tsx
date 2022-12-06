@@ -4,7 +4,14 @@ import Loader from '../components/Loader';
 import useFirebase from '../hooks/useFirebase';
 import { toast } from 'react-toastify';
 
-const FirebaseContext = createContext({});
+// ==================== TYPES ====================
+interface FirebaseContextProps {
+  isAnonymousAccount: boolean;
+  isNormalAccount: boolean;
+  user: object;
+}
+
+const FirebaseContext = createContext({} as FirebaseContextProps);
 
 const useFirebaseContext = () => {
   return useContext(FirebaseContext);
@@ -16,7 +23,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const { isFirebaseInitialized } = useFirebase();
   const [isAnonymousAccount, setIsAnonymousAccount] = useState(false);
   const [isNormalAccount, setIsNormalAccount] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
 
   // SIGN IN ANONYMOUSLY
   useEffect(() => {
@@ -39,7 +46,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const auth = getAuth();
 
-    const listener = (newUser) => {
+    const listener = (newUser: any) => {
       if (newUser) {
         setUser(newUser);
         if (newUser.isAnonymous) {
@@ -52,7 +59,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
           toast.success('You have signed in successfully!');
         }
       } else {
-        setUser(null);
+        setUser({});
         setIsAnonymousAccount(false);
         setIsNormalAccount(false);
       }
