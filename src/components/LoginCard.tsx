@@ -4,7 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { MdEmail } from 'react-icons/md';
 import { motion } from 'framer-motion';
 
-function LoginCard({ showAddress }: { showAddress: (value: boolean) => void }) {
+function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: boolean) => void }) {
   const { user } = useFirebaseContext();
 
   return (
@@ -25,7 +25,7 @@ function LoginCard({ showAddress }: { showAddress: (value: boolean) => void }) {
         <button
           className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
           disabled={!user}
-          onClick={() => showAddress(true)}
+          onClick={() => setShowAddressManager(true)}
         >
           Παράγγειλε τώρα
         </button>

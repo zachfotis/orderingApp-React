@@ -4,16 +4,12 @@ import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { BiSearchAlt2 } from 'react-icons/bi';
-import { MdPlace } from 'react-icons/md';
 import { useDeliveryContext } from '../../context/DeliveryContext';
+import { MdPlace } from 'react-icons/md';
 import GpsInput from './GpsInput';
+import { motion } from 'framer-motion';
 
-interface SearchAddressProps {
-  showSearch: (value: boolean) => void;
-  showConfirmAddress: (value: boolean) => void;
-}
-
-function SearchAddress({ showSearch, showConfirmAddress }: SearchAddressProps) {
+function SearchAddress() {
   const [newAddress, setNewAddress] = useState('');
   const [proposedAddresses, setProposedAddresses] = useState([]);
   const { userInfoDispatch } = useDeliveryContext();
@@ -32,17 +28,48 @@ function SearchAddress({ showSearch, showConfirmAddress }: SearchAddressProps) {
     }
   }, [newAddress]);
 
-  const setAddress = (selectedAddress: string) => {
+  const setAddress = async (selectedAddress: string) => {
+    const encodedAddress = encodeURIComponent(selectedAddress);
+    const response = await fetch(`http://localhost:3001/api/coordinates?address=${encodedAddress}`);
+    const coordinates = await response.json();
+
     userInfoDispatch({
       type: 'SET_ADDRESS',
       payload: selectedAddress,
     });
-    showSearch(false);
-    showConfirmAddress(true);
+
+    if (coordinates?.lat && coordinates?.lng) {
+      userInfoDispatch({
+        type: 'SET_COORDS_LAT',
+        payload: coordinates.lat,
+      });
+      userInfoDispatch({
+        type: 'SET_COORDS_LNG',
+        payload: coordinates.lng,
+      });
+    } else {
+      userInfoDispatch({
+        type: 'SET_COORDS_LAT',
+        payload: 0,
+      });
+      userInfoDispatch({
+        type: 'SET_COORDS_LNG',
+        payload: 0,
+      });
+    }
   };
 
   return (
-    <div className="w-full  flex flex-col justify-start items-start gap-5">
+    <motion.div
+      key="search-address"
+      initial={{ opacity: 0, x: '100%' }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, x: '-100%' }}
+      className="w-full flex flex-col justify-start items-start gap-5 mt-14 py-7 px-5"
+    >
+      <h1 className="text-2xl font-[500] w-full text-left md:text-4xl">Βάλε την διεύθυνση σου</h1>
+
       <FormControl variant="outlined" className="w-full">
         <InputLabel htmlFor="address-input">Διεύθυνση</InputLabel>
         <OutlinedInput
@@ -80,7 +107,7 @@ function SearchAddress({ showSearch, showConfirmAddress }: SearchAddressProps) {
             </div>
           </div>
         ))}
-    </div>
+    </motion.div>
   );
 }
 export default SearchAddress;

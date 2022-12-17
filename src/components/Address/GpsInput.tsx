@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { MdOutlineGpsFixed as GpsIcon, MdArrowForwardIos as ArrowIcon } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
@@ -12,16 +11,30 @@ function GpsInput() {
     } else {
       setIsLoading(true);
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setIsLoading(false);
+        async (position) => {
+          const lat = String(position.coords.latitude);
+          const lng = String(position.coords.longitude);
+          const coords = { lat, lng };
+          const encodedCoords = new URLSearchParams(coords).toString();
+          const response = await fetch(`http://localhost:3001/api/address?${encodedCoords}`);
+          const address = await response.json();
+
+          if (address) {
+            userInfoDispatch({
+              type: 'SET_ADDRESS',
+              payload: address,
+            });
+          }
+
           userInfoDispatch({
             type: 'SET_COORDS_LAT',
-            payload: String(position.coords.latitude),
+            payload: Number(position.coords.latitude),
           });
           userInfoDispatch({
             type: 'SET_COORDS_LNG',
-            payload: String(position.coords.longitude),
+            payload: Number(position.coords.longitude),
           });
+          setIsLoading(false);
         },
         () => {
           setIsLoading(false);

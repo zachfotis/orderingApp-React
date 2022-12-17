@@ -1,14 +1,22 @@
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { motion } from 'framer-motion';
 
 function ConfirmAddress() {
-  const { userInfoState } = useDeliveryContext();
+  const { userInfoState, userInfoDispatch } = useDeliveryContext();
   const position = [Number(userInfoState.coords_lat), Number(userInfoState.coords_lng)];
 
   return (
-    <div className="w-full h-full flex flex-col justify-end items-center">
-      <div className="w-full h-fit rounded-lg overflow-hidden">
-        <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ width: '100%', height: '300px' }}>
+    <motion.div
+      key="confirm-address"
+      initial={{ opacity: 0, x: '100%' }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, x: '-100%' }}
+      className="w-full h-screen flex flex-col justify-start items-center gap-5"
+    >
+      <div className="w-full h-[50%] overflow-hidden">
+        <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ width: '100%', height: '100%' }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -16,7 +24,30 @@ function ConfirmAddress() {
           <Marker position={position} />
         </MapContainer>
       </div>
-    </div>
+      <div className="w-full max-w-[500px] flex flex-col rounded-lg justify-center items-start gap-5 px-5">
+        <div className="w-full flex flex-col justify-start items-center gap-1">
+          <h1 className="w-full text-2xl font-bold text-slate-900 text-center">
+            {userInfoState?.address?.split(',')[0]}
+          </h1>
+          <h1 className="w-full text-sm text-center text-greyLight">
+            {userInfoState?.address?.split(',')[1]}, {userInfoState?.address?.split(',')[2]}
+          </h1>
+        </div>
+        <div className="w-full flex flex-col justify-start items-center gap-3">
+          <button
+            className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
+            onClick={() => {
+              userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
+            }}
+          >
+            Επιβεβαίωση Διεύθυνσης
+          </button>
+          <button className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight">
+            <p className="w-full">Επεξεργασία</p>
+          </button>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 export default ConfirmAddress;

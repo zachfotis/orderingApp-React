@@ -3,10 +3,10 @@ import { AnimatePresence } from 'framer-motion';
 
 import LoginCard from '../components/LoginCard';
 import Wallpaper from '../assets/images/wallpaper.jpg';
-import Address from '../components/Address/Address';
+import AddressManager from '../components/Address/AddressManager';
 
 function Welcome() {
-  const [showAddress, setShowAddress] = useState(false);
+  const [showAddressManager, setShowAddressManager] = useState(false);
 
   return (
     <section
@@ -16,8 +16,12 @@ function Welcome() {
     >
       <img src={Wallpaper} alt="wallpaper food" className="h-[100%] w-full object-cover md:w-[50%]" />
 
-      <AnimatePresence>{!showAddress && <LoginCard showAddress={setShowAddress} />}</AnimatePresence>
-      <AnimatePresence>{showAddress && <Address showAddress={setShowAddress} />}</AnimatePresence>
+      <AnimatePresence>
+        {!showAddressManager && <LoginCard setShowAddressManager={setShowAddressManager} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showAddressManager && <AddressManager setShowAddressManager={setShowAddressManager} />}
+      </AnimatePresence>
     </section>
   );
 }
