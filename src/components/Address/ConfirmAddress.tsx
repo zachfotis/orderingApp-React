@@ -1,21 +1,22 @@
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { motion } from 'framer-motion';
+import useLocalStorage from '../../hooks/useLocalStorage';
 
-function ConfirmAddress() {
+function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
-  const position = [Number(userInfoState.coords_lat), Number(userInfoState.coords_lng)];
+  const [address, setAddress] = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
+  const position: [number, number] = [Number(userInfoState.fullAddress.lat), Number(userInfoState.fullAddress.lng)];
 
   return (
     <motion.div
-      key="confirm-address"
-      initial={{ opacity: 0, x: '100%' }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: '100%' }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      exit={{ opacity: 0, x: '-100%' }}
-      className="w-full h-screen flex flex-col justify-start items-center gap-5"
+      exit={{ opacity: 0, y: '-100%' }}
+      className="relative w-full min-h-screen flex flex-col justify-start items-center gap-5"
     >
-      <div className="w-full h-[50%] overflow-hidden">
+      <div className="relative w-full h-[50%] overflow-hidden">
         <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ width: '100%', height: '100%' }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -27,10 +28,11 @@ function ConfirmAddress() {
       <div className="w-full max-w-[500px] flex flex-col rounded-lg justify-center items-start gap-5 px-5">
         <div className="w-full flex flex-col justify-start items-center gap-1">
           <h1 className="w-full text-2xl font-bold text-slate-900 text-center">
-            {userInfoState?.address?.split(',')[0]}
+            {userInfoState.fullAddress.address} {userInfoState.fullAddress.number}
           </h1>
           <h1 className="w-full text-sm text-center text-greyLight">
-            {userInfoState?.address?.split(',')[1]}, {userInfoState?.address?.split(',')[2]}
+            {userInfoState.fullAddress.area !== userInfoState.fullAddress.city ? userInfoState.fullAddress.area : ''}
+            {userInfoState.fullAddress.postalCode}, {userInfoState.fullAddress.city}
           </h1>
         </div>
         <div className="w-full flex flex-col justify-start items-center gap-3">
@@ -38,11 +40,17 @@ function ConfirmAddress() {
             className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
             onClick={() => {
               userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
+              setAddress(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
             }}
           >
             Επιβεβαίωση Διεύθυνσης
           </button>
-          <button className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight">
+          <button
+            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight"
+            onClick={() => {
+              setShowEditAddress(true);
+            }}
+          >
             <p className="w-full">Επεξεργασία</p>
           </button>
         </div>

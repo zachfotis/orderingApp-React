@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
+import useLocalStorage from '../hooks/useLocalStorage';
 
 // ==================== TYPES ====================
 interface DeliveryContextProps {
@@ -14,10 +15,16 @@ interface ReducerStateProps {
   lastName: string;
   email: string;
   phone: string;
-  address: string;
-  coords_lat: number;
-  coords_lng: number;
-  addressConfirmed: boolean;
+  fullAddress: {
+    address: string;
+    number: string;
+    area: string;
+    city: string;
+    postalCode: string;
+    lat: number;
+    lng: number;
+    confirmed: boolean;
+  };
 }
 
 type ReducerActionProps =
@@ -25,10 +32,21 @@ type ReducerActionProps =
   | { type: 'SET_LAST_NAME'; payload: string }
   | { type: 'SET_EMAIL'; payload: string }
   | { type: 'SET_PHONE'; payload: string }
-  | { type: 'SET_ADDRESS'; payload: string }
-  | { type: 'SET_COORDS_LAT'; payload: number }
-  | { type: 'SET_COORDS_LNG'; payload: number }
-  | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean };
+  | {
+      type: 'SET_ADDRESS';
+      payload: {
+        address: string;
+        number: string;
+        area: string;
+        city: string;
+        postalCode: string;
+        lat: number;
+        lng: number;
+        confirmed: boolean;
+      };
+    }
+  | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean }
+  | { type: 'DELETE_ADDRESS' };
 
 // ==================== DeliveryContext ====================
 const DeliveryContext = createContext({} as DeliveryContextProps);
@@ -51,13 +69,23 @@ const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
     case 'SET_PHONE':
       return { ...state, phone: action.payload };
     case 'SET_ADDRESS':
-      return { ...state, address: action.payload };
-    case 'SET_COORDS_LAT':
-      return { ...state, coords_lat: action.payload };
-    case 'SET_COORDS_LNG':
-      return { ...state, coords_lng: action.payload };
+      return { ...state, fullAddress: action.payload };
     case 'SET_ADDRESS_CONFIRMED':
-      return { ...state, addressConfirmed: action.payload };
+      return { ...state, fullAddress: { ...state.fullAddress, confirmed: action.payload } };
+    case 'DELETE_ADDRESS':
+      return {
+        ...state,
+        fullAddress: {
+          address: '',
+          number: '',
+          area: '',
+          city: '',
+          postalCode: '',
+          lat: 0,
+          lng: 0,
+          confirmed: false,
+        },
+      };
     default:
       return state;
   }
@@ -65,15 +93,25 @@ const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
 
 function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [address, setAddress] = useLocalStorage('address', '');
+
   const [userInfoState, userInfoDispatch] = useReducer(reducer, {
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    address: '',
-    coords_lat: 0,
-    coords_lng: 0,
-    addressConfirmed: false,
+    fullAddress: address
+      ? JSON.parse(address)
+      : {
+          address: '',
+          number: '',
+          area: '',
+          city: '',
+          postalCode: '',
+          lat: 0,
+          lng: 0,
+          confirmed: false,
+        },
   });
 
   return (

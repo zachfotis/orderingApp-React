@@ -3,8 +3,8 @@ import FirebaseProvider from './context/FirebaseContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Welcome from './pages/Welcome';
-import NewAddress from './components/Address/AddressManager';
 import DeliveryProvider from './context/DeliveryContext';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Welcome />} />
-            <Route path="/new-address" element={<NewAddress />} />
+            <Route path="/home" element={<Home />} />
           </Routes>
         </Router>
         <ToastContainer autoClose={2000} closeOnClick />
