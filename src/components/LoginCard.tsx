@@ -10,7 +10,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: boolean) => void }) {
   const { user } = useFirebaseContext();
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
-  const [address, setAddress] = useLocalStorage('address', '');
+  const { setValue } = useLocalStorage('address', '');
 
   const navigate = useNavigate();
 
@@ -39,7 +39,7 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
               className="text-xl text-red-600 cursor-pointer"
               onClick={() => {
                 userInfoDispatch({ type: 'DELETE_ADDRESS' });
-                setAddress('');
+                setValue('');
                 setShowAddressManager(true);
               }}
             />

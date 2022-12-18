@@ -5,7 +5,7 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 
 function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
-  const [address, setAddress] = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
+  const { setValue } = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
   const position: [number, number] = [Number(userInfoState.fullAddress.lat), Number(userInfoState.fullAddress.lng)];
 
   return (
@@ -14,7 +14,7 @@ function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: bo
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       exit={{ opacity: 0, y: '-100%' }}
-      className="relative w-full min-h-screen flex flex-col justify-start items-center gap-5"
+      className="relative w-full min-h-full flex flex-col justify-start items-center gap-5"
     >
       <div className="relative w-full h-[50%] overflow-hidden">
         <MapContainer center={position} zoom={15} scrollWheelZoom={true} style={{ width: '100%', height: '100%' }}>
@@ -40,7 +40,7 @@ function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: bo
             className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
             onClick={() => {
               userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
-              setAddress(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
+              setValue(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
             }}
           >
             Επιβεβαίωση Διεύθυνσης

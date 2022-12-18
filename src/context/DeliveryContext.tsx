@@ -93,15 +93,15 @@ const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
 
 function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [address, setAddress] = useLocalStorage('address', '');
+  const { storedValue } = useLocalStorage('address', '');
 
   const [userInfoState, userInfoDispatch] = useReducer(reducer, {
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    fullAddress: address
-      ? JSON.parse(address)
+    fullAddress: storedValue
+      ? JSON.parse(storedValue)
       : {
           address: '',
           number: '',

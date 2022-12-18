@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 
 import LoginCard from '../components/LoginCard';
 import Wallpaper from '../assets/images/wallpaper.jpg';
-import AddressManager from '../components/Address/AddressManager';
+import AddressManager from '../components/address/AddressManager';
 
 function Welcome() {
   const [showAddressManager, setShowAddressManager] = useState(false);

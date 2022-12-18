@@ -3,7 +3,7 @@ import { useState } from 'react';
 // value type can be string or function that returns string
 type valueType = string | ((value: string) => string);
 
-function useLocalStorage(key: string, initialValue: string): [string, (value: string) => void] {
+function useLocalStorage(key: string, initialValue: string) {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
 
@@ -38,7 +38,7 @@ function useLocalStorage(key: string, initialValue: string): [string, (value: st
       null;
     }
   };
-  return [storedValue, setValue];
+  return { storedValue, setValue };
 }
 
 export default useLocalStorage;

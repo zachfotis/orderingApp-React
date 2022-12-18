@@ -6,7 +6,7 @@ interface LoaderProps {
 
 function LoaderSmall({ text = 'Loading...' }: LoaderProps) {
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-5">
+    <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-5">
       <span className="loader"></span>
       <p>{text}</p>
     </div>

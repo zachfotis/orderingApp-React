@@ -57,7 +57,7 @@ function SearchAddress() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       exit={{ opacity: 0, y: '-100%' }}
-      className="w-full flex flex-col justify-start items-start gap-5 mt-14 py-7 px-5"
+      className="w-full h-full flex flex-col justify-start items-start gap-5 mt-14 py-7 px-5"
     >
       <h1 className="text-2xl font-[500] w-full text-left md:text-4xl">Βάλε την διεύθυνση σου</h1>
 
