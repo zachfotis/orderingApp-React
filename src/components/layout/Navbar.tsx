@@ -8,23 +8,9 @@ function Navbar() {
   const { userInfoState } = useDeliveryContext();
 
   return (
-    <div className="bg-white w-full p-5 mb-2 shadow-lg sticky md:mb-5">
+    <nav className="bg-white w-full p-5 mb-2 shadow-lg sticky top-0 z-10 md:mb-5">
       <div className="w-full max-w-[1280px] mx-auto flex justify-between items-center gap-10">
-        <div className="flex justify-center items-center gap-5">
-          <FaUser className="text-2xl cursor-pointer" />
-          <div className="hidden md:flex flex-col justify-start items-start">
-            <h1 className="text-sm text-center">Φώτης </h1>
-            <h1 className="text-sm text-center">Ζαχόπουλος</h1>
-          </div>
-        </div>
-        <div className="flex justify-center items-center gap-2 md:order-2">
-          <MdLocationOn className="text-3xl hidden md:block" />
-          <div className="flex flex-col justify-start items-start">
-            <h1 className="text-sm text-greyLight text-center hidden md:block">Διεύθυνση Παράδοσης:</h1>
-            <h1 className="md:text-sm">{userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number}</h1>
-          </div>
-        </div>
-        <div className="max-w-[600px] md:mx-auto md:flex-1">
+        <div className="max-w-[600px] md:mx-auto md:flex-1 md:order-2">
           <HiSearch className="text-2xl cursor-pointer md:hidden" />
           <div className="w-full hidden md:block">
             <FormControl variant="outlined" className="w-full" size="small">
@@ -42,8 +28,22 @@ function Navbar() {
             </FormControl>
           </div>
         </div>
+        <div className="flex justify-center items-center gap-2 md:order-1">
+          <MdLocationOn className="text-3xl text-orange-600 hidden md:block" />
+          <div className="flex flex-col justify-start items-start">
+            <h1 className="text-sm text-greyLight text-center hidden md:block">Διεύθυνση Παράδοσης:</h1>
+            <h1 className="md:text-sm">{userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number}</h1>
+          </div>
+        </div>
+        <div className="flex justify-center items-center gap-3 md:order-3">
+          <div className="hidden md:flex flex-col justify-start items-end">
+            <h1 className="text-sm">Φώτης</h1>
+            <h1 className="text-sm">Ζαχόπουλος</h1>
+          </div>
+          <FaUser className="text-2xl cursor-pointer" />
+        </div>
       </div>
-    </div>
+    </nav>
   );
 }
 export default Navbar;

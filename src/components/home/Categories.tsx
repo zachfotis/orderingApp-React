@@ -1,43 +1,40 @@
 import CategoryItem from './CategoryItem';
+import { motion } from 'framer-motion';
+import { Typewriter } from 'react-simple-typewriter';
 
-function Categories() {
+type Category = {
+  id: number;
+  name: string;
+  selected: boolean;
+};
+
+interface CategoriesProps {
+  categories: Category[];
+  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+}
+
+function Categories({ categories, setCategories }: CategoriesProps) {
   return (
-    <div className="w-full overflow-y-auto snap-x p-5 flex justify-start items-center gap-5 md:gap-7">
-      {categories.map((category) => (
-        <CategoryItem key={category.id} category={category} />
-      ))}
+    <div className="w-full max-w-[1280px] flex flex-col md:py-5 justify-start items-start">
+      <h1 className="ml-5 font-[500] hidden md:block">
+        <Typewriter
+          words={['', 'Τί θα φάμε σήμερα;', 'Ή μήπως να πιούμε κάτι;', 'Επέλεξε τον τύπο φαγητού που σου αρέσει:']}
+          delaySpeed={2000}
+          typeSpeed={100}
+        />
+        &nbsp;
+      </h1>
+      <motion.div
+        initial={{ opacity: 0, x: '100%' }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.5, type: 'spring', stiffness: 100 }}
+        className="w-full overflow-y-auto p-5 snap-x flex justify-start items-center gap-5 md:gap-7"
+      >
+        {categories.map((category) => (
+          <CategoryItem key={category.id} category={category} setCategories={setCategories} />
+        ))}
+      </motion.div>
     </div>
   );
 }
 export default Categories;
-
-const categories = [
-  {
-    id: 1,
-    name: 'Καφέδες',
-  },
-  {
-    id: 2,
-    name: 'Σουβλάκια',
-  },
-  {
-    id: 3,
-    name: 'Πίτσες',
-  },
-  {
-    id: 4,
-    name: 'Κρέπες',
-  },
-  {
-    id: 5,
-    name: 'Burgers',
-  },
-  {
-    id: 6,
-    name: 'Ψητά',
-  },
-  {
-    id: 7,
-    name: 'Ιταλική',
-  },
-];

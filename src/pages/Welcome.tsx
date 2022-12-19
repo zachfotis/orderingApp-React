@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import LoginCard from '../components/LoginCard';
 import Wallpaper from '../assets/images/wallpaper.jpg';
@@ -9,7 +9,11 @@ function Welcome() {
   const [showAddressManager, setShowAddressManager] = useState(false);
 
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
       className="relative min-h-screen h-screen w-full flex flex-col justify-start items-center
       md:flex-row-reverse md:justify-between md:items-stretch
     "
@@ -22,7 +26,7 @@ function Welcome() {
       <AnimatePresence>
         {showAddressManager && <AddressManager setShowAddressManager={setShowAddressManager} />}
       </AnimatePresence>
-    </section>
+    </motion.section>
   );
 }
 export default Welcome;
