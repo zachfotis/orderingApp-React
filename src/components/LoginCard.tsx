@@ -36,7 +36,7 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
               {userInfoState.fullAddress.postalCode}, {userInfoState.fullAddress.city}{' '}
             </p>
             <MdDelete
-              className="text-xl text-red-600 cursor-pointer"
+              className="text-xl text-red-500 cursor-pointer"
               onClick={() => {
                 userInfoDispatch({ type: 'DELETE_ADDRESS' });
                 setValue('');

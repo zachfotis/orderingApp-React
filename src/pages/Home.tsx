@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Categories from '../components/home/Categories';
 import Navbar from '../components/layout/Navbar';
 import { motion } from 'framer-motion';
+import Stores from '../components/home/Stores';
 
 type Category = {
   id: number;
@@ -18,10 +19,10 @@ function Home() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       exit={{ opacity: 0 }}
-      className="w-full min-h-screen flex flex-col justify-start items-center"
+      className="w-full min-h-screen flex flex-col justify-start items-center overflow-hidden"
     >
-      <Navbar />
       <Categories categories={categories} setCategories={setCategories} />
+      <Stores />
     </motion.div>
   );
 }

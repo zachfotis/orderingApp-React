@@ -6,12 +6,14 @@ import Welcome from './pages/Welcome';
 import DeliveryProvider from './context/DeliveryContext';
 import Home from './pages/Home';
 import { AnimatePresence } from 'framer-motion';
+import Navbar from './components/layout/Navbar';
 
 function App() {
   return (
     <FirebaseProvider>
       <DeliveryProvider>
         <Router>
+          <Navbar />
           <AnimatedRoutes />
         </Router>
         <ToastContainer autoClose={2000} closeOnClick />

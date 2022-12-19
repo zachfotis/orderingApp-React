@@ -16,7 +16,7 @@ interface CategoriesProps {
 function Categories({ categories, setCategories }: CategoriesProps) {
   return (
     <div className="w-full max-w-[1280px] flex flex-col md:py-5 justify-start items-start">
-      <h1 className="ml-5 font-[500] hidden md:block">
+      <h1 className="ml-5 hidden md:block">
         <Typewriter
           words={['', 'Τί θα φάμε σήμερα;', 'Ή μήπως να πιούμε κάτι;', 'Επέλεξε τον τύπο φαγητού που σου αρέσει:']}
           delaySpeed={2000}
