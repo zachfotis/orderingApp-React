@@ -1,13 +1,17 @@
-import { createContext, useContext, useReducer, useState } from 'react';
+import { createContext, useContext, useEffect, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
 import useLocalStorage from '../hooks/useLocalStorage';
 
+import { Store, Address, Category } from '../types';
 // ==================== TYPES ====================
 interface DeliveryContextProps {
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   userInfoState: ReducerStateProps;
   userInfoDispatch: (value: ReducerActionProps) => void;
+  stores: Store[];
+  categories: Category[];
+  setCategories: (value: Category[] | ((prev: Category[]) => Category[])) => void;
 }
 
 interface ReducerStateProps {
@@ -15,16 +19,7 @@ interface ReducerStateProps {
   lastName: string;
   email: string;
   phone: string;
-  fullAddress: {
-    address: string;
-    number: string;
-    area: string;
-    city: string;
-    postalCode: string;
-    lat: number;
-    lng: number;
-    confirmed: boolean;
-  };
+  fullAddress: Address;
 }
 
 type ReducerActionProps =
@@ -34,16 +29,7 @@ type ReducerActionProps =
   | { type: 'SET_PHONE'; payload: string }
   | {
       type: 'SET_ADDRESS';
-      payload: {
-        address: string;
-        number: string;
-        area: string;
-        city: string;
-        postalCode: string;
-        lat: number;
-        lng: number;
-        confirmed: boolean;
-      };
+      payload: Address;
     }
   | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean }
   | { type: 'DELETE_ADDRESS' };
@@ -114,6 +100,29 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
         },
   });
 
+  const [stores, setStores] = useState<Store[]>([]);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const getStores = async () => {
+      const response = await fetch('http://localhost:3001/api/stores');
+      const data: Store[] = await response.json();
+      setStores(data);
+    };
+
+    const getCategories = async () => {
+      const response = await fetch('http://localhost:3001/api/categories');
+      const data = await response.json();
+      const categoriesArray = data.categories;
+      categoriesArray.forEach((category: Category) => (category.selected = false));
+      setCategories(categoriesArray);
+    };
+
+    getStores();
+    getCategories();
+  }, []);
+
   return (
     <DeliveryContext.Provider
       value={{
@@ -121,6 +130,9 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
         setIsLoading,
         userInfoState,
         userInfoDispatch,
+        stores,
+        categories,
+        setCategories,
       }}
     >
       <>

@@ -1,57 +1,47 @@
 import { useEffect, useState } from 'react';
+import { useDeliveryContext } from '../../context/DeliveryContext';
 import LoaderSmall from '../LoaderSmall';
 import StoreItem from './StoreItem';
 
-type Store = {
-  _id: string;
-  title: string;
-  categories: string[];
-  info: {
-    deliveryTime: number;
-    minimumOrder: number;
-  };
-  ratings: {
-    average: number;
-    total: number;
-  };
-  images: {
-    logo: string;
-    cover: string;
-  };
-};
+import { Store, Category } from '../../types';
 
-function Stores() {
+function Stores({ categories }: { categories: Category[] }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [stores, setStores] = useState<Store[]>([]);
+  const { stores } = useDeliveryContext();
+  const [sortedStores, setSortedStores] = useState<Store[]>([]);
 
   useEffect(() => {
-    const getStores = async () => {
-      setIsLoading(true);
-      const response = await fetch('http://localhost:3001/api/stores');
-      const data = await response.json();
+    setIsLoading(true);
+    // get all selected categories
+    const selectedCategories = categories.filter((category) => category.selected);
 
-      // replace image urls with unsplash random images
-      // data.forEach((store: Store) => {
-      //   const category = `${getRandomImage(store.categories[0])},food`;
-      //   store.images.cover = `https://source.unsplash.com/random/400x200?${category}&sig=${Math.floor(
-      //     Math.random() * 1000,
-      //   )}`;
-      // });
-
-      setStores(data);
+    // if no categories are selected, show all stores
+    if (selectedCategories.length === 0) {
+      setSortedStores(stores);
       setIsLoading(false);
-    };
+      return;
+    }
 
-    getStores();
-  }, []);
+    // get all stores that have at least one of the selected categories
+    const filteredStores = stores.filter((store) => {
+      return store.categories.some((category) =>
+        selectedCategories.some((selectedCategory) => selectedCategory.name === category),
+      );
+    });
+
+    setSortedStores(filteredStores);
+    setIsLoading(false);
+  }, [stores, categories]);
 
   return isLoading ? (
     <LoaderSmall />
   ) : (
     <div className="w-full max-w-[1280px] flex flex-col p-5 justify-start items-start gap-5">
-      <h1>{stores?.length > 0 ? stores.length : 0} καταστήματα</h1>
+      <h1>
+        {sortedStores?.length > 0 ? sortedStores.length : 0} {sortedStores?.length === 1 ? 'κατάστημα' : 'καταστήματα'}
+      </h1>
       <div className="w-full flex justify-between items-start flex-wrap gap-10">
-        {stores?.map((store) => (
+        {sortedStores?.map((store) => (
           <StoreItem key={store._id} store={store} />
         ))}
       </div>
@@ -59,24 +49,3 @@ function Stores() {
   );
 }
 export default Stores;
-
-const getRandomImage = (category: string) => {
-  switch (category) {
-    case 'Σουβλάκια':
-      return 'meat';
-    case 'Pizza':
-      return 'pizza';
-    case 'Ψητά - Grill':
-      return 'grill';
-    case 'Burgers':
-      return 'burgers';
-    case 'Ζυμαρικά':
-      return 'pasta';
-    case 'Κρέπες':
-      return 'crepa';
-    case 'Καφέδες':
-      return 'coffee';
-    default:
-      return 'food';
-  }
-};

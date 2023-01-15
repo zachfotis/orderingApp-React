@@ -7,6 +7,7 @@ import DeliveryProvider from './context/DeliveryContext';
 import Home from './pages/Home';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/layout/Navbar';
+import Store from './pages/Store';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Welcome />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/store/:id" element={<Store />} />
       </Routes>
     </AnimatePresence>
   );

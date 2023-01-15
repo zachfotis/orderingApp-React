@@ -2,15 +2,11 @@ import CategoryItem from './CategoryItem';
 import { motion } from 'framer-motion';
 import { Typewriter } from 'react-simple-typewriter';
 
-type Category = {
-  id: number;
-  name: string;
-  selected: boolean;
-};
+import { Category } from '../../types';
 
 interface CategoriesProps {
   categories: Category[];
-  setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
+  setCategories: (value: Category[] | ((prevVar: Category[]) => Category[])) => void;
 }
 
 function Categories({ categories, setCategories }: CategoriesProps) {
@@ -31,7 +27,7 @@ function Categories({ categories, setCategories }: CategoriesProps) {
         className="w-full overflow-y-auto p-5 snap-x flex justify-start items-center gap-5 md:gap-7"
       >
         {categories.map((category) => (
-          <CategoryItem key={category.id} category={category} setCategories={setCategories} />
+          <CategoryItem key={category.name} category={category} setCategories={setCategories} />
         ))}
       </motion.div>
     </div>

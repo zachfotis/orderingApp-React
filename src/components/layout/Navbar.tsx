@@ -18,7 +18,7 @@ function Navbar() {
           animate={{ opacity: 1, y: 0, position: 'sticky' }}
           transition={{ duration: 0.5, delay: 0.5 }}
           exit={{ opacity: 0, y: '-100%', position: 'absolute' }}
-          className="bg-white w-full p-5 mb-2 shadow-lg sticky top-0 z-10 md:mb-5"
+          className="bg-white w-full p-5 mb-2 shadow-lg sticky top-0 z-50 md:mb-5"
         >
           <div className="w-full max-w-[1280px] mx-auto flex justify-between items-center gap-10">
             <div className="max-w-[600px] md:mx-auto md:flex-1 md:order-2">
