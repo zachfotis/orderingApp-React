@@ -3,10 +3,22 @@ import { motion } from 'framer-motion';
 import Stores from '../components/home/Stores';
 
 import { useDeliveryContext } from '../context/DeliveryContext';
+import { useEffect, useState } from 'react';
+import { baseURL } from '../utilities/server';
 
 function Home() {
   const { categories, setCategories } = useDeliveryContext();
+  const [dealsCatalog, setDealsCatalog] = useState([]);
 
+  useEffect(() => {
+    const getDealsCatalog = async () => {
+      const response = await fetch(`${baseURL}api/dealStores`);
+      const data = await response.json();
+      setDealsCatalog(data);
+    };
+
+    getDealsCatalog();
+  }, []);
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -16,7 +28,7 @@ function Home() {
       className="w-full flex flex-col justify-start items-center overflow-hidden"
     >
       <Categories categories={categories} setCategories={setCategories} />
-      <Stores categories={categories} />
+      <Stores categories={categories} dealsCatalog={dealsCatalog} />
     </motion.div>
   );
 }

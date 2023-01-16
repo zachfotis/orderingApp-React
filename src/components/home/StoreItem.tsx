@@ -2,10 +2,11 @@ import { AiFillStar } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { baseURL } from '../../utilities/server';
+import DealsIcon from '../../assets/icons/deals.png';
 
 import { Store } from '../../types';
 
-function StoreItem({ store }: { store: Store }) {
+function StoreItem({ store, dealsCatalog }: { store: Store; dealsCatalog: string[] }) {
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
@@ -21,13 +22,16 @@ function StoreItem({ store }: { store: Store }) {
             className="w-full h-full object-cover"
           />
           <motion.img
-            src={store.images.logo}
+            src={baseURL + store.images.logo}
             alt="banner"
             loading="lazy"
-            className="absolute top-[58%] left-[15px] z-10 w-[40px] h-[40px] rounded-full border border-greyLight bg-white"
+            className="absolute top-[58%] left-[15px] z-10 w-[40px] h-[40px] rounded-full border border-greyLight bg-white p-1"
             whileHover={{ scale: 1.3 }}
             transition={{ duration: 0.3 }}
           />
+          {dealsCatalog?.includes(store._id) && (
+            <img src={DealsIcon} alt="deals" className="absolute top-[50%] right-[10px] z-10 w-[40px] h-[40px]" />
+          )}
         </div>
         <div className="w-full h-[100px] p-5 bg-white flex justify-between items-center rounded-t-lg absolute top-[190px] ">
           <div className="flex flex-col justify-start items-start gap-0">

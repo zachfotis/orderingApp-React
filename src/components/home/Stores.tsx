@@ -5,7 +5,7 @@ import StoreItem from './StoreItem';
 
 import { Store, Category } from '../../types';
 
-function Stores({ categories }: { categories: Category[] }) {
+function Stores({ categories, dealsCatalog }: { categories: Category[]; dealsCatalog: string[] }) {
   const [isLoading, setIsLoading] = useState(false);
   const { stores } = useDeliveryContext();
   const [sortedStores, setSortedStores] = useState<Store[]>([]);
@@ -42,7 +42,7 @@ function Stores({ categories }: { categories: Category[] }) {
       </h1>
       <div className="w-full flex justify-between items-start flex-wrap gap-10">
         {sortedStores?.map((store) => (
-          <StoreItem key={store._id} store={store} />
+          <StoreItem key={store._id} store={store} dealsCatalog={dealsCatalog} />
         ))}
       </div>
     </div>

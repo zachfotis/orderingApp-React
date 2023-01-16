@@ -33,7 +33,13 @@ function Store() {
       exit={{ opacity: 0 }}
       className="w-full max-w-[1000px] mx-auto flex flex-col justify-start items-start overflow-hidden"
     >
-      <Header store={store} />
+      <Header
+        store={store}
+        isDeal={
+          // has key
+          Object.hasOwnProperty.call(catalog, 'Specials')
+        }
+      />
       <Categories catalog={catalog} />
       <Menu catalog={catalog} />
     </motion.div>

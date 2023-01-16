@@ -23,7 +23,7 @@ function Menu({ catalog }: { catalog: object }) {
                         <p className="text-base font-[400]">Από {item.price}€</p>
                       </div>
                       <img
-                        src={`https://source.unsplash.com/100x100/?${item.name},${key}`}
+                        src={`https://source.unsplash.com/100x100/?${item.name},food,coffee`}
                         alt=""
                         className="w-[100px] h-[100px] object-cover rounded-md"
                       />
