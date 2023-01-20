@@ -1,10 +1,12 @@
-import { createContext, useContext, useEffect, useReducer, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
+import MenuItemOptions from '../components/Store/MenuItemOptions';
 import useLocalStorage from '../hooks/useLocalStorage';
 
-import { Store, Address, Category } from '../types';
+import { Store, Address, Category, MenuItem, BasketItem, BasketSelectedItem } from '../types';
 // ==================== TYPES ====================
 interface DeliveryContextProps {
+  isDeliveryInitialized: boolean;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   userInfoState: ReducerStateProps;
@@ -12,6 +14,14 @@ interface DeliveryContextProps {
   stores: Store[];
   categories: Category[];
   setCategories: (value: Category[] | ((prev: Category[]) => Category[])) => void;
+  showOptions: boolean;
+  setShowOptions: (value: boolean) => void;
+  activeMenuItem: MenuItem | null;
+  setActiveMenuItem: (value: MenuItem | null) => void;
+  activeStore: Store | null;
+  setActiveStore: (value: Store | null) => void;
+  basketState: BasketStateProps;
+  basketDispatch: (value: BasketActionProps) => void;
 }
 
 interface ReducerStateProps {
@@ -34,16 +44,6 @@ type ReducerActionProps =
   | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean }
   | { type: 'DELETE_ADDRESS' };
 
-// ==================== DeliveryContext ====================
-const DeliveryContext = createContext({} as DeliveryContextProps);
-
-const useDeliveryContext = () => {
-  return useContext(DeliveryContext);
-};
-
-export { useDeliveryContext };
-
-// ==================== DeliveryProvider ====================
 const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
   switch (action.type) {
     case 'SET_FIRST_NAME':
@@ -77,10 +77,84 @@ const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
   }
 };
 
+interface BasketStateProps {
+  store: Store | null;
+  totalItems: BasketSelectedItem[] | [];
+}
+
+interface BasketActionProps {
+  type: 'ADD_ITEM';
+  payload: BasketItem;
+}
+
+const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
+  switch (action.type) {
+    case 'ADD_ITEM':
+      // Check if the store is the same as the one in the basket
+      if (state?.store === action.payload.store) {
+        // Check if the item is already in the basket
+        const itemInBasket = state.totalItems.find((item) => {
+          return (
+            // Check all the options to see if they are the same
+            item.itemName === action.payload.selectedItem.itemName &&
+            Object.keys(item.options).every((optionKey) => {
+              return Object.keys(item.options[optionKey]).every((optionValue) => {
+                return (
+                  item.options[optionKey][optionValue] === action.payload.selectedItem.options[optionKey][optionValue]
+                );
+              });
+            })
+          );
+        });
+        if (itemInBasket) {
+          // If the item is already in the basket, update the quantity
+          const updatedItems = state.totalItems.map((item) => {
+            if (item.itemName === action.payload.selectedItem.itemName) {
+              return { ...item, quantity: item.quantity + action.payload.selectedItem.quantity };
+            }
+            return item;
+          });
+
+          return {
+            ...state,
+            totalItems: updatedItems,
+          };
+        } else {
+          return {
+            ...state,
+            totalItems: [...state.totalItems, action.payload.selectedItem],
+          };
+        }
+        // If the store is different, clear the basket and add the new item
+      } else {
+        return {
+          store: action.payload.store,
+          totalItems: [action.payload.selectedItem],
+        };
+      }
+    default:
+      return state;
+  }
+};
+
+// ==================== DeliveryContext ====================
+const DeliveryContext = createContext({} as DeliveryContextProps);
+
+const useDeliveryContext = () => {
+  return useContext(DeliveryContext);
+};
+
+export { useDeliveryContext };
+
+// ==================== DeliveryProvider ====================
+
 function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeliveryInitialized, setIsDeliveryInitialized] = useState(false);
+
   const { storedValue } = useLocalStorage('address', '');
 
+  // State for the user info
   const [userInfoState, userInfoDispatch] = useReducer(reducer, {
     firstName: '',
     lastName: '',
@@ -100,9 +174,22 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
         },
   });
 
+  // State for the stores
   const [stores, setStores] = useState<Store[]>([]);
+  const [activeStore, setActiveStore] = useState<Store | null>(null);
 
+  // State fpr the categories of all stores
   const [categories, setCategories] = useState<Category[]>([]);
+
+  // State for the basket of the current store
+  const [basketState, basketDispatch] = useReducer(basketReducer, {
+    store: null,
+    totalItems: [],
+  });
+
+  // State for the options for the selected menu item
+  const [showOptions, setShowOptions] = useState(false);
+  const [activeMenuItem, setActiveMenuItem] = useState<MenuItem | null>(null);
 
   useEffect(() => {
     const getStores = async () => {
@@ -123,20 +210,42 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
     getCategories();
   }, []);
 
+  // Check if the delivery is initialized
+  useEffect(() => {
+    if (stores.length > 0 && categories.length > 0 && userInfoState.fullAddress.confirmed) {
+      setIsDeliveryInitialized(true);
+    } else {
+      setIsDeliveryInitialized(false);
+    }
+  }, [stores, categories, userInfoState.fullAddress.confirmed]);
+
+  const providerValues = useMemo(
+    () => ({
+      isDeliveryInitialized,
+      isLoading,
+      setIsLoading,
+      userInfoState,
+      userInfoDispatch,
+      stores,
+      categories,
+      setCategories,
+      showOptions,
+      setShowOptions,
+      activeMenuItem,
+      setActiveMenuItem,
+      activeStore,
+      setActiveStore,
+      basketState,
+      basketDispatch,
+    }),
+    [isLoading, userInfoState, userInfoDispatch, stores, categories, showOptions, activeMenuItem],
+  );
+
   return (
-    <DeliveryContext.Provider
-      value={{
-        isLoading,
-        setIsLoading,
-        userInfoState,
-        userInfoDispatch,
-        stores,
-        categories,
-        setCategories,
-      }}
-    >
+    <DeliveryContext.Provider value={providerValues}>
       <>
-        {isLoading && <Loader />}
+        {(isLoading || !isDeliveryInitialized) && <Loader />}
+        {showOptions && <MenuItemOptions setShowOptions={setShowOptions} item={activeMenuItem} />}
         {children}
       </>
     </DeliveryContext.Provider>

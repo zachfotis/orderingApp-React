@@ -44,7 +44,7 @@ function Navbar() {
               <div className="flex flex-col justify-start items-start">
                 <h1 className="text-sm text-greyLight text-center hidden md:block">Διεύθυνση Παράδοσης:</h1>
                 <h1 className="md:text-sm">
-                  {userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number}
+                  {userInfoState?.fullAddress?.address + ' ' + userInfoState?.fullAddress?.number}
                 </h1>
               </div>
             </div>

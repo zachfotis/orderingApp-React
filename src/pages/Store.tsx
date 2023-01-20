@@ -7,10 +7,12 @@ import Categories from '../components/Store/Categories';
 import { baseURL } from '../utilities/server';
 import Menu from '../components/Store/Menu';
 
+import { Catalog } from '../types';
+
 function Store() {
   const { id } = useParams<{ id: string }>();
-  const { stores } = useDeliveryContext();
-  const [catalog, setCatalog] = useState([]);
+  const { stores, setActiveStore } = useDeliveryContext();
+  const [catalog, setCatalog] = useState<Catalog>({});
 
   useEffect(() => {
     const getCatalog = async () => {
@@ -21,6 +23,13 @@ function Store() {
 
     getCatalog();
   }, []);
+
+  useEffect(() => {
+    const store = stores.find((store) => store._id === id);
+    if (store) {
+      setActiveStore(store);
+    }
+  }, [stores]);
 
   const store = stores.find((store) => store._id === id);
   if (!store) return null;
@@ -33,13 +42,7 @@ function Store() {
       exit={{ opacity: 0 }}
       className="w-full max-w-[1000px] mx-auto flex flex-col justify-start items-start overflow-hidden"
     >
-      <Header
-        store={store}
-        isDeal={
-          // has key
-          Object.hasOwnProperty.call(catalog, 'Specials')
-        }
-      />
+      <Header store={store} isDeal={Object.hasOwnProperty.call(catalog, 'Specials')} />
       <Categories catalog={catalog} />
       <Menu catalog={catalog} />
     </motion.div>

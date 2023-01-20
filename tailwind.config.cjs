@@ -17,5 +17,5 @@ module.exports = {
       sans: ['Roboto', 'sans-serif'],
     },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar-hide')],
 };
