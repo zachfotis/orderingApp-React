@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'framer-motion';
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
 import MenuItemOptions from '../components/Store/MenuItemOptions';
@@ -16,6 +17,8 @@ interface DeliveryContextProps {
   setCategories: (value: Category[] | ((prev: Category[]) => Category[])) => void;
   showOptions: boolean;
   setShowOptions: (value: boolean) => void;
+  replaceMenuItem: BasketSelectedItem | null;
+  setReplaceMenuItem: (value: BasketSelectedItem | null) => void;
   activeMenuItem: MenuItem | null;
   setActiveMenuItem: (value: MenuItem | null) => void;
   activeStore: Store | null;
@@ -83,9 +86,33 @@ interface BasketStateProps {
 }
 
 interface BasketActionProps {
-  type: 'ADD_ITEM';
+  type: 'ADD_ITEM' | 'INCREASE_QUANTITY' | 'DECREASE_QUANTITY' | 'REMOVE_ITEM' | 'REPLACE_ITEM';
   payload: BasketItem;
 }
+
+const checkIfItemIsInBasket = (totalItems: BasketSelectedItem[], payload: BasketItem) => {
+  const inBasketItem = totalItems.find((item) => {
+    return checkIfItemsAreTheSame(item, payload.selectedItem);
+  });
+
+  if (inBasketItem) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const checkIfItemsAreTheSame = (item1: BasketSelectedItem, item2: BasketSelectedItem) => {
+  return (
+    // Check all the options to see if they are the same
+    item1.itemName === item2.itemName &&
+    Object.keys(item1.options).every((optionKey) => {
+      return Object.keys(item1.options[optionKey]).every((optionValue) => {
+        return item1.options[optionKey][optionValue] === item2.options[optionKey][optionValue];
+      });
+    })
+  );
+};
 
 const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
   switch (action.type) {
@@ -93,23 +120,11 @@ const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
       // Check if the store is the same as the one in the basket
       if (state?.store === action.payload.store) {
         // Check if the item is already in the basket
-        const itemInBasket = state.totalItems.find((item) => {
-          return (
-            // Check all the options to see if they are the same
-            item.itemName === action.payload.selectedItem.itemName &&
-            Object.keys(item.options).every((optionKey) => {
-              return Object.keys(item.options[optionKey]).every((optionValue) => {
-                return (
-                  item.options[optionKey][optionValue] === action.payload.selectedItem.options[optionKey][optionValue]
-                );
-              });
-            })
-          );
-        });
+        const itemInBasket = checkIfItemIsInBasket(state.totalItems, action.payload);
         if (itemInBasket) {
           // If the item is already in the basket, update the quantity
           const updatedItems = state.totalItems.map((item) => {
-            if (item.itemName === action.payload.selectedItem.itemName) {
+            if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
               return { ...item, quantity: item.quantity + action.payload.selectedItem.quantity };
             }
             return item;
@@ -132,6 +147,53 @@ const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
           totalItems: [action.payload.selectedItem],
         };
       }
+    case 'INCREASE_QUANTITY': {
+      const updatedItems = state.totalItems.map((item) => {
+        if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      });
+      return {
+        ...state,
+        totalItems: updatedItems,
+      };
+    }
+    case 'DECREASE_QUANTITY': {
+      const updatedItems = state.totalItems.map((item) => {
+        if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
+          if (item.quantity === 1) return item;
+
+          return { ...item, quantity: item.quantity - 1 };
+        }
+        return item;
+      });
+      return {
+        ...state,
+        totalItems: updatedItems,
+      };
+    }
+    case 'REMOVE_ITEM': {
+      const updatedItems = state.totalItems.filter((item) => {
+        return !checkIfItemsAreTheSame(item, action.payload.selectedItem);
+      });
+      return {
+        ...state,
+        totalItems: updatedItems,
+      };
+    }
+    case 'REPLACE_ITEM': {
+      const updatedItems = state.totalItems.map((item) => {
+        if (item.id === action.payload.selectedItem.id) {
+          return action.payload.selectedItem;
+        }
+        return item;
+      });
+      return {
+        ...state,
+        totalItems: updatedItems,
+      };
+    }
     default:
       return state;
   }
@@ -190,6 +252,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   // State for the options for the selected menu item
   const [showOptions, setShowOptions] = useState(false);
   const [activeMenuItem, setActiveMenuItem] = useState<MenuItem | null>(null);
+  const [replaceMenuItem, setReplaceMenuItem] = useState<BasketSelectedItem | null>(null);
 
   useEffect(() => {
     const getStores = async () => {
@@ -237,15 +300,30 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       setActiveStore,
       basketState,
       basketDispatch,
+      replaceMenuItem,
+      setReplaceMenuItem,
     }),
-    [isLoading, userInfoState, userInfoDispatch, stores, categories, showOptions, activeMenuItem],
+    [
+      isLoading,
+      userInfoState,
+      userInfoDispatch,
+      stores,
+      categories,
+      showOptions,
+      activeMenuItem,
+      activeStore,
+      basketState,
+      replaceMenuItem,
+    ],
   );
 
   return (
     <DeliveryContext.Provider value={providerValues}>
       <>
         {isLoading && <Loader />}
-        {showOptions && <MenuItemOptions setShowOptions={setShowOptions} item={activeMenuItem} />}
+        <AnimatePresence>
+          {showOptions && <MenuItemOptions item={activeMenuItem} replaceItem={replaceMenuItem} />}
+        </AnimatePresence>
         {children}
       </>
     </DeliveryContext.Provider>

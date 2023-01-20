@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { MenuItem, MenuItemsSelected } from '../../types';
+import { useDeliveryContext } from '../../context/DeliveryContext';
+import { BasketSelectedItem, MenuItem, MenuItemsSelected } from '../../types';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
-import { useDeliveryContext } from '../../context/DeliveryContext';
+import { motion } from 'framer-motion';
+import { v4 as uuidv4 } from 'uuid';
 
 interface MenuItemOptionsProps {
   item: MenuItem | null;
-  setShowOptions: React.Dispatch<React.SetStateAction<boolean>>;
+  replaceItem: BasketSelectedItem | null;
 }
 
 type RequiredOptions = {
@@ -104,8 +106,8 @@ const isRequiredOptionsSelectionGiven = (menuItemsSelected: MenuItemsSelected | 
 
 // -------------------------------------------------------------
 
-function MenuItemOptions({ item, setShowOptions }: MenuItemOptionsProps) {
-  const { basketDispatch, activeStore } = useDeliveryContext();
+function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
+  const { basketDispatch, activeStore, setShowOptions, setReplaceMenuItem, setActiveMenuItem } = useDeliveryContext();
   const [menuItemPrice, setMenuItemPrice] = useState(Number(item?.price.toFixed(2)) || 0);
   const [menuItemsSelected, setMenuItemsSelected] = useState(initializeMenuItemsSelected(item));
   const [quantity, setQuantity] = useState(1);
@@ -142,20 +144,45 @@ function MenuItemOptions({ item, setShowOptions }: MenuItemOptionsProps) {
     if (!menuItemsSelected || !item) return;
     if (!isAtLeastOneItemSelected(menuItemsSelected, item)) return;
     if (activeStore) {
-      basketDispatch({
-        type: 'ADD_ITEM',
-        payload: {
-          store: activeStore,
-          selectedItem: {
-            itemName: item.name,
-            itemPrice: menuItemPrice,
-            quantity,
-            options: menuItemsSelected,
+      if (!replaceItem) {
+        basketDispatch({
+          type: 'ADD_ITEM',
+          payload: {
+            store: activeStore,
+            selectedItem: {
+              id: uuidv4(),
+              itemName: item.name,
+              itemPrice: menuItemPrice,
+              quantity,
+              options: menuItemsSelected,
+            },
           },
-        },
-      });
+        });
+      } else {
+        basketDispatch({
+          type: 'REPLACE_ITEM',
+          payload: {
+            store: activeStore,
+            selectedItem: {
+              id: replaceItem.id,
+              itemName: item.name,
+              itemPrice: menuItemPrice,
+              quantity,
+              options: menuItemsSelected,
+            },
+          },
+        });
+      }
+      setReplaceMenuItem(null);
       setShowOptions(false);
+      setActiveMenuItem(null);
     }
+  };
+
+  const closeWindow = () => {
+    setReplaceMenuItem(null);
+    setShowOptions(false);
+    setActiveMenuItem(null);
   };
 
   useEffect(() => {
@@ -177,11 +204,20 @@ function MenuItemOptions({ item, setShowOptions }: MenuItemOptionsProps) {
   if (!item) return null;
 
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 bg-black bg-opacity-50 z-[100]">
-      <div
+    <motion.div
+      className="w-screen h-screen fixed top-0 left-0 bg-black bg-opacity-50 z-[100]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
         className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 
         w-screen md:w-[50vw] max-w-[700px] h-screen md:h-[80%] flex flex-col justify-start items-start overflow-hidden
-    bg-white md:rounded-md shadow-lg z-10"
+        bg-white md:rounded-md shadow-lg z-10"
+        initial={{ top: '-100%' }}
+        animate={{ top: '50%' }}
+        exit={{ top: '-100%' }}
+        transition={{ duration: 0.5 }}
       >
         <div className="relative w-full bg-white flex flex-col justify-start items-start gap-1 p-5">
           <h1 className="text-base font-[500]">{item?.name}</h1>
@@ -189,7 +225,7 @@ function MenuItemOptions({ item, setShowOptions }: MenuItemOptionsProps) {
           <p className="text-xl font-[500] mt-3">{menuItemPrice}€</p>
           <AiOutlineCloseCircle
             className="absolute top-5 right-5 text-3xl text-greyDark cursor-pointer hover:scale-110 transition-all duration-200"
-            onClick={() => setShowOptions(false)}
+            onClick={closeWindow}
           />
         </div>
         <div className="w-full flex-1 bg-gray-100 p-5 flex flex-col justify-start items-start gap-7 overflow-auto md:scrollbar-hide">
@@ -276,11 +312,11 @@ function MenuItemOptions({ item, setShowOptions }: MenuItemOptionsProps) {
             className="bg-yellow text-black py-3 px-5 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
             onClick={handleAddToCart}
           >
-            Προσθήκη στο καλάθι
+            {replaceItem ? 'Διόρθωση' : 'Προσθήκη στο καλάθι'}
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 export default MenuItemOptions;

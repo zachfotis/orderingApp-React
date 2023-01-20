@@ -66,6 +66,7 @@ export type BasketItem = {
 };
 
 export type BasketSelectedItem = {
+  id: string;
   itemName: string;
   itemPrice: number;
   quantity: number;

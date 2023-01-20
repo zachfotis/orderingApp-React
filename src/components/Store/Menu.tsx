@@ -4,9 +4,10 @@ import { useDeliveryContext } from '../../context/DeliveryContext';
 import { Catalog, MenuItem } from '../../types';
 
 function Menu({ catalog }: { catalog: Catalog }) {
-  const { setActiveMenuItem, setShowOptions } = useDeliveryContext();
+  const { setActiveMenuItem, setShowOptions, setReplaceMenuItem } = useDeliveryContext();
 
   const handleMenuItemOptions = (item: MenuItem) => {
+    setReplaceMenuItem(null);
     setShowOptions(true);
     setActiveMenuItem(item);
   };
