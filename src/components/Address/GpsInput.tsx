@@ -25,15 +25,6 @@ function GpsInput() {
               payload: address,
             });
           }
-
-          userInfoDispatch({
-            type: 'SET_COORDS_LAT',
-            payload: Number(position.coords.latitude),
-          });
-          userInfoDispatch({
-            type: 'SET_COORDS_LNG',
-            payload: Number(position.coords.longitude),
-          });
           setIsLoading(false);
         },
         () => {

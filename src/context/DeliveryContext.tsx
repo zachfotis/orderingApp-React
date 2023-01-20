@@ -244,7 +244,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   return (
     <DeliveryContext.Provider value={providerValues}>
       <>
-        {(isLoading || !isDeliveryInitialized) && <Loader />}
+        {isLoading && <Loader />}
         {showOptions && <MenuItemOptions setShowOptions={setShowOptions} item={activeMenuItem} />}
         {children}
       </>
