@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/layout/Navbar';
 import Store from './pages/Store';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<Welcome />} />
         <Route path="/home" element={<Home />} />
         <Route path="/store/:id" element={<Store />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Routes>
     </AnimatePresence>
   );

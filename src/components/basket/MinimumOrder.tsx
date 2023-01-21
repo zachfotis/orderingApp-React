@@ -13,7 +13,7 @@ function MinimumOrder({ minimumPrice, currentPrice }: { minimumPrice: number; cu
     >
       <p className="w-full text-sm font-[400] text-center">
         Χρειάζεσαι
-        <span className="font-[600]"> {minimumPrice - currentPrice}€ </span>
+        <span className="font-[600]"> {(minimumPrice - currentPrice).toFixed(2)}€ </span>
         ακόμα για την ελάχιστη παραγγελία!
       </p>
       <div className="relative w-full h-[7px] bg-gray-200 rounded-lg">

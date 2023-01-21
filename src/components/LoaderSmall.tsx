@@ -1,4 +1,4 @@
-import './Loader.css';
+import './LoaderSmall.css';
 
 interface LoaderProps {
   text?: string;
@@ -7,8 +7,8 @@ interface LoaderProps {
 function LoaderSmall({ text = 'Loading...' }: LoaderProps) {
   return (
     <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-5">
-      <span className="loader"></span>
-      <p>{text}</p>
+      <span className="loaderSmall"></span>
+      <p className="text-sm text-greyDark">{text}</p>
     </div>
   );
 }

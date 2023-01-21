@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useDeliveryContext } from '../../context/DeliveryContext';
-import RibbonIcon from '../../assets/icons/ribbon.png';
-import CartIcon from '../../assets/icons/empty-cart.png';
-import { BsFillBasket2Fill } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 
 import BasketItem from './BasketItem';
 import MinimumOrder from './MinimumOrder';
+
+import RibbonIcon from '../../assets/icons/ribbon.png';
+import CartIcon from '../../assets/icons/empty-cart.png';
+import { BsFillBasket2Fill } from 'react-icons/bs';
 import { BasketSelectedItem } from '../../types';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -13,8 +15,13 @@ function Basket() {
   const { basketState, activeStore, showBasket, setShowBasket } = useDeliveryContext();
   const [basketQuantity, setBasketQuantity] = useState(0);
   const [basketTotal, setBasketTotal] = useState(0);
-
+  const navigate = useNavigate();
   const toggleBasket = () => setShowBasket(!showBasket);
+
+  const handleCheckout = () => {
+    setShowBasket(false);
+    navigate('/checkout');
+  };
 
   useEffect(() => {
     setBasketQuantity((basketState.totalItems as BasketSelectedItem[]).reduce((acc, item) => acc + item.quantity, 0));
@@ -82,6 +89,7 @@ function Basket() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: '100%' }}
                 transition={{ duration: 0.3 }}
+                onClick={handleCheckout}
               >
                 <p className="px-2 py-1 rounded-lg bg-slate-50">{basketQuantity}</p>
                 <p>Συνέχεια</p>
