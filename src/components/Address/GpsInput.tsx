@@ -1,6 +1,7 @@
 import { MdOutlineGpsFixed as GpsIcon, MdArrowForwardIos as ArrowIcon } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
+import { baseURL } from '../../utilities/server';
 
 function GpsInput() {
   const { setIsLoading, userInfoDispatch } = useDeliveryContext();
@@ -16,7 +17,7 @@ function GpsInput() {
           const lng = String(position.coords.longitude);
           const coords = { lat, lng };
           const encodedCoords = new URLSearchParams(coords).toString();
-          const response = await fetch(`http://localhost:3001/api/address?${encodedCoords}`);
+          const response = await fetch(`${baseURL}/api/address?${encodedCoords}`);
           const address = await response.json();
 
           if (address) {

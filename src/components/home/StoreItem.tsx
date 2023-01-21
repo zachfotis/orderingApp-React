@@ -9,20 +9,23 @@ import { Store } from '../../types';
 function StoreItem({ store, dealsCatalog }: { store: Store; dealsCatalog: string[] }) {
   return (
     <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       whileHover={{ scale: 1.03 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.4 }}
       className="relative min-w-full xl:min-w-[380px] xl:max-w-[380px] h-[290px] flex flex-col justify-start items-start overflow-hidden rounded-lg shadow-lg cursor-pointer"
     >
       <Link to={`/store/${store._id}`} className="w-full">
         <div className="w-full h-[200px]">
           <img
-            src={`${baseURL}${store.images.thumb}`}
+            src={baseURL + '/' + store.images.thumb}
             alt="banner"
             loading="lazy"
             className="w-full h-full object-cover"
           />
           <motion.img
-            src={baseURL + store.images.logo}
+            src={baseURL + '/' + store.images.logo}
             alt="banner"
             loading="lazy"
             className="absolute top-[58%] left-[15px] z-10 w-[40px] h-[40px] rounded-full border border-greyLight bg-white p-1"

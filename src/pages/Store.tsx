@@ -12,18 +12,18 @@ import Basket from '../components/Basket/Basket';
 
 function Store() {
   const { id } = useParams<{ id: string }>();
-  const { stores, setActiveStore } = useDeliveryContext();
+  const { stores, setActiveStore, showBasket, setShowBasket } = useDeliveryContext();
   const [catalog, setCatalog] = useState<Catalog>({});
-  const [showBasket, setShowBasket] = useState(false);
 
   useEffect(() => {
     const getCatalog = async () => {
-      const response = await fetch(`${baseURL}api/catalog/${id}`);
+      const response = await fetch(`${baseURL}/api/catalog/${id}`);
       const data = await response.json();
       setCatalog(data.categories);
     };
 
     getCatalog();
+    setShowBasket(false);
   }, []);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ function Store() {
         <Categories catalog={catalog} />
         <Menu catalog={catalog} />
       </div>
-      <Basket showBasket={showBasket} setShowBasket={setShowBasket} />
+      <Basket />
     </motion.div>
   );
 }

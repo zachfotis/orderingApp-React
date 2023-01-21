@@ -7,14 +7,10 @@ import { BsFillBasket2Fill } from 'react-icons/bs';
 import BasketItem from './BasketItem';
 import MinimumOrder from './MinimumOrder';
 import { BasketSelectedItem } from '../../types';
+import { AnimatePresence, motion } from 'framer-motion';
 
-interface BasketProps {
-  showBasket: boolean;
-  setShowBasket: (showBasket: boolean) => void;
-}
-
-function Basket({ showBasket, setShowBasket }: BasketProps) {
-  const { basketState, activeStore } = useDeliveryContext();
+function Basket() {
+  const { basketState, activeStore, showBasket, setShowBasket } = useDeliveryContext();
   const [basketQuantity, setBasketQuantity] = useState(0);
   const [basketTotal, setBasketTotal] = useState(0);
 
@@ -78,15 +74,23 @@ function Basket({ showBasket, setShowBasket }: BasketProps) {
             )}
           </div>
           {/* Bottom Part */}
-          {basketTotal >= basketState.store.info.minimumOrder ? (
-            <button className="w-full bg-yellow text-black py-3 px-5 rounded-lg font-[500] text-base hover:bg-yellowHover disabled:bg-greyLight flex justify-between items-center">
-              <p className="px-2 py-1 rounded-lg bg-slate-50">{basketQuantity}</p>
-              <p>Συνέχεια</p>
-              <p>{basketTotal.toFixed(2)}€</p>
-            </button>
-          ) : (
-            <MinimumOrder minimumPrice={basketState.store.info.minimumOrder} currentPrice={basketTotal} />
-          )}
+          <AnimatePresence>
+            {basketTotal >= basketState.store.info.minimumOrder ? (
+              <motion.button
+                className="w-full bg-yellow text-black py-3 px-5 rounded-lg font-[500] text-base hover:bg-yellowHover disabled:bg-greyLight flex justify-between items-center"
+                initial={{ opacity: 0, y: '100%' }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: '100%' }}
+                transition={{ duration: 0.3 }}
+              >
+                <p className="px-2 py-1 rounded-lg bg-slate-50">{basketQuantity}</p>
+                <p>Συνέχεια</p>
+                <p>{basketTotal.toFixed(2)}€</p>
+              </motion.button>
+            ) : (
+              <MinimumOrder minimumPrice={basketState.store.info.minimumOrder} currentPrice={basketTotal} />
+            )}
+          </AnimatePresence>
         </div>
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center gap-7 p-5">

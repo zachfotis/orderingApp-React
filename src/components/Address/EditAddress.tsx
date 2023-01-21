@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { useDeliveryContext } from '../../context/DeliveryContext';
+import { baseURL } from '../../utilities/server';
 import LoaderSmall from '../LoaderSmall';
 
 function EditAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
@@ -21,7 +22,7 @@ function EditAddress({ setShowEditAddress }: { setShowEditAddress: (value: boole
     const getFullAddress = async () => {
       const requestedAddress = `${address} ${area} ${city} ${postalCode}`;
       const encodedAddress = encodeURIComponent(requestedAddress);
-      const response = await fetch(`http://localhost:3001/api/coordinates?address=${encodedAddress}`);
+      const response = await fetch(`${baseURL}/api/coordinates?address=${encodedAddress}`);
       const fullAddress = await response.json();
       if (!fullAddress) {
         return;
@@ -36,7 +37,7 @@ function EditAddress({ setShowEditAddress }: { setShowEditAddress: (value: boole
   const handleSubmit = async (selectedAddress: string) => {
     setIsLoading(true);
     const encodedAddress = encodeURIComponent(selectedAddress);
-    const response = await fetch(`http://localhost:3001/api/coordinates?address=${encodedAddress}`);
+    const response = await fetch(`${baseURL}/api/coordinates?address=${encodedAddress}`);
     const fullAddress = await response.json();
 
     if (!fullAddress) {

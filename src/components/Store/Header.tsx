@@ -12,7 +12,7 @@ function Header({ store, isDeal }: { store: Store; isDeal: boolean }) {
   return (
     <div className="relative w-full">
       <img
-        src={baseURL + store.images.cover}
+        src={baseURL + '/' + store.images.cover}
         alt={store.title}
         className="w-full h-[300px] object-cover rounded-t-md"
       />
@@ -28,7 +28,7 @@ function Header({ store, isDeal }: { store: Store; isDeal: boolean }) {
       </div>
       <div className="w-full bg-white flex justify-start items-center p-5 gap-5">
         <img
-          src={baseURL + store.images.logo}
+          src={baseURL + '/' + store.images.logo}
           alt="banner"
           loading="lazy"
           className="h-[70px] rounded-full border border-greyLight bg-white p-2"

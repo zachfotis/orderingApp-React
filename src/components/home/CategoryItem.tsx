@@ -31,7 +31,7 @@ function CategoryItem({ category, setCategories }: CategoryItemProps) {
       whileHover={{ scale: 1.05 }}
     >
       <div className="w-[70px] h-[70px] rounded-lg flex justify-center items-center px-3">
-        <img src={baseURL + category.icon} alt={category.name} className="w-full object-cover rounded-lg" />
+        <img src={baseURL + '/' + category.icon} alt={category.name} className="w-full object-cover rounded-lg" />
       </div>
       <h1 className="text-sm text-greyLight text-center">{category.name}</h1>
     </motion.div>

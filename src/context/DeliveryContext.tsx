@@ -5,6 +5,7 @@ import MenuItemOptions from '../components/Store/MenuItemOptions';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 import { Store, Address, Category, MenuItem, BasketItem, BasketSelectedItem } from '../types';
+import { baseURL } from '../utilities/server';
 // ==================== TYPES ====================
 interface DeliveryContextProps {
   isDeliveryInitialized: boolean;
@@ -25,6 +26,8 @@ interface DeliveryContextProps {
   setActiveStore: (value: Store | null) => void;
   basketState: BasketStateProps;
   basketDispatch: (value: BasketActionProps) => void;
+  showBasket: boolean;
+  setShowBasket: (value: boolean) => void;
 }
 
 interface ReducerStateProps {
@@ -149,7 +152,7 @@ const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
       }
     case 'INCREASE_QUANTITY': {
       const updatedItems = state.totalItems.map((item) => {
-        if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
+        if (item.id === action.payload.selectedItem.id) {
           return { ...item, quantity: item.quantity + 1 };
         }
         return item;
@@ -161,7 +164,7 @@ const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
     }
     case 'DECREASE_QUANTITY': {
       const updatedItems = state.totalItems.map((item) => {
-        if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
+        if (item.id === action.payload.selectedItem.id) {
           if (item.quantity === 1) return item;
 
           return { ...item, quantity: item.quantity - 1 };
@@ -175,7 +178,7 @@ const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
     }
     case 'REMOVE_ITEM': {
       const updatedItems = state.totalItems.filter((item) => {
-        return !checkIfItemsAreTheSame(item, action.payload.selectedItem);
+        return item.id !== action.payload.selectedItem.id;
       });
       return {
         ...state,
@@ -248,6 +251,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
     store: null,
     totalItems: [],
   });
+  const [showBasket, setShowBasket] = useState(true);
 
   // State for the options for the selected menu item
   const [showOptions, setShowOptions] = useState(false);
@@ -256,13 +260,13 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const getStores = async () => {
-      const response = await fetch('http://localhost:3001/api/stores');
+      const response = await fetch(`${baseURL}/api/stores`);
       const data: Store[] = await response.json();
       setStores(data);
     };
 
     const getCategories = async () => {
-      const response = await fetch('http://localhost:3001/api/categories');
+      const response = await fetch(`${baseURL}/api/categories`);
       const data = await response.json();
       const categoriesArray = data.categories;
       categoriesArray.forEach((category: Category) => (category.selected = false));
@@ -302,6 +306,8 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       basketDispatch,
       replaceMenuItem,
       setReplaceMenuItem,
+      showBasket,
+      setShowBasket,
     }),
     [
       isLoading,
@@ -314,6 +320,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       activeStore,
       basketState,
       replaceMenuItem,
+      showBasket,
     ],
   );
 

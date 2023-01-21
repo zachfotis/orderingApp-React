@@ -9,6 +9,7 @@ import { MdPlace } from 'react-icons/md';
 import GpsInput from './GpsInput';
 import { motion } from 'framer-motion';
 import LoaderSmall from '../LoaderSmall';
+import { baseURL } from '../../utilities/server';
 
 function SearchAddress() {
   const [newAddress, setNewAddress] = useState('');
@@ -19,7 +20,7 @@ function SearchAddress() {
   useEffect(() => {
     const getLocation = async () => {
       setIsLoading(true);
-      const response = await fetch(`http://localhost:3001/api/places?address=${newAddress}`);
+      const response = await fetch(`${baseURL}/api/places?address=${newAddress}`);
       const data = await response.json();
       setProposedAddresses(data);
       setIsLoading(false);
@@ -36,7 +37,7 @@ function SearchAddress() {
     setIsLoading(true);
     setProposedAddresses([]);
     const encodedAddress = encodeURIComponent(selectedAddress);
-    const response = await fetch(`http://localhost:3001/api/coordinates?address=${encodedAddress}`);
+    const response = await fetch(`${baseURL}/api/coordinates?address=${encodedAddress}`);
     const fullAddress = await response.json();
 
     if (!fullAddress) {

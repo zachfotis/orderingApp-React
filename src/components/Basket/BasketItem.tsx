@@ -16,7 +16,7 @@ function BasketItem({ item, store }: BasketItemProps) {
   const [showEdit, setShowEdit] = useState(false);
 
   const openMenuItemOptions = async (item: BasketSelectedItem) => {
-    const response = await fetch(`${baseURL}api/catalog/${store?._id}`);
+    const response = await fetch(`${baseURL}/api/catalog/${store?._id}`);
     const data = await response.json();
     const catalog = data.categories;
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { BasketSelectedItem, MenuItem, MenuItemsSelected } from '../../types';
-import { AiOutlineCloseCircle } from 'react-icons/ai';
+import { MdOutlineClose } from 'react-icons/md';
 import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
 import { motion } from 'framer-motion';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,7 +17,7 @@ type RequiredOptions = {
 
 // ---------------------- HELPER FUNCTIONS ----------------------
 
-const initializeMenuItemsSelected = (item: MenuItem | null) => {
+const initializeMenuItemsSelected = (item: MenuItem | null, replaceItem: BasketSelectedItem | null) => {
   if (!item) return null;
 
   const obj: MenuItemsSelected = {};
@@ -26,9 +26,13 @@ const initializeMenuItemsSelected = (item: MenuItem | null) => {
       if (!item?.options) return;
       const optionsObj = item.options[optionTitle];
       Object.keys(optionsObj).forEach((option) => {
+        let optionValue = false;
+        if (replaceItem?.options?.[optionTitle]) {
+          optionValue = replaceItem?.options?.[optionTitle]?.[option] ? true : false;
+        }
         obj[optionTitle] = {
           ...obj[optionTitle],
-          [option]: false,
+          [option]: optionValue,
         };
       });
     });
@@ -107,10 +111,15 @@ const isRequiredOptionsSelectionGiven = (menuItemsSelected: MenuItemsSelected | 
 // -------------------------------------------------------------
 
 function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
-  const { basketDispatch, activeStore, setShowOptions, setReplaceMenuItem, setActiveMenuItem } = useDeliveryContext();
-  const [menuItemPrice, setMenuItemPrice] = useState(Number(item?.price.toFixed(2)) || 0);
-  const [menuItemsSelected, setMenuItemsSelected] = useState(initializeMenuItemsSelected(item));
-  const [quantity, setQuantity] = useState(1);
+  const { basketDispatch, activeStore, setShowOptions, setReplaceMenuItem, setActiveMenuItem, setShowBasket } =
+    useDeliveryContext();
+  const [menuItemPrice, setMenuItemPrice] = useState(
+    Number(
+      replaceItem?.itemPrice ? (replaceItem.itemPrice * replaceItem.quantity).toFixed(2) : item?.price.toFixed(2) || 0,
+    ),
+  );
+  const [menuItemsSelected, setMenuItemsSelected] = useState(initializeMenuItemsSelected(item, replaceItem));
+  const [quantity, setQuantity] = useState(replaceItem?.quantity || 1);
   const [requiredOptionsSelection, setRequiredOptionsSelection] = useState<RequiredOptions | null>(null);
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLInputElement>, optionTitle: string, optionItem: string) => {
@@ -152,7 +161,7 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
             selectedItem: {
               id: uuidv4(),
               itemName: item.name,
-              itemPrice: menuItemPrice,
+              itemPrice: item.price,
               quantity,
               options: menuItemsSelected,
             },
@@ -166,13 +175,14 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
             selectedItem: {
               id: replaceItem.id,
               itemName: item.name,
-              itemPrice: menuItemPrice,
+              itemPrice: item.price,
               quantity,
               options: menuItemsSelected,
             },
           },
         });
       }
+      setShowBasket(true);
       setReplaceMenuItem(null);
       setShowOptions(false);
       setActiveMenuItem(null);
@@ -185,10 +195,10 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
     setActiveMenuItem(null);
   };
 
+  // Update Price
   useEffect(() => {
     if (!menuItemsSelected || !item) return;
 
-    // Update Price
     const price = Object.keys(menuItemsSelected).reduce((acc, optionTitle) => {
       Object.keys(menuItemsSelected[optionTitle]).forEach((optionItem) => {
         const optionPrice = item.options?.[optionTitle]?.[optionItem] || 0;
@@ -201,6 +211,15 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
     setMenuItemPrice(Number((price * quantity).toFixed(2)));
   }, [menuItemsSelected, quantity]);
 
+  // Prevent background scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   if (!item) return null;
 
   return (
@@ -208,6 +227,7 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
       className="w-screen h-screen fixed top-0 left-0 bg-black bg-opacity-50 z-[100]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
       <motion.div
@@ -223,8 +243,8 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
           <h1 className="text-base font-[500]">{item?.name}</h1>
           <p className="text-sm font-[400] text-greyLight">{item?.description}</p>
           <p className="text-xl font-[500] mt-3">{menuItemPrice}€</p>
-          <AiOutlineCloseCircle
-            className="absolute top-5 right-5 text-3xl text-greyDark cursor-pointer hover:scale-110 transition-all duration-200"
+          <MdOutlineClose
+            className="absolute top-3 right-3 text-xl text-greyDark cursor-pointer hover:scale-110 transition-all duration-200"
             onClick={closeWindow}
           />
         </div>

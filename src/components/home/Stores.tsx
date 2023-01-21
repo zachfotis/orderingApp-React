@@ -4,6 +4,7 @@ import LoaderSmall from '../LoaderSmall';
 import StoreItem from './StoreItem';
 
 import { Store, Category } from '../../types';
+import { AnimatePresence } from 'framer-motion';
 
 function Stores({ categories, dealsCatalog }: { categories: Category[]; dealsCatalog: string[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +42,11 @@ function Stores({ categories, dealsCatalog }: { categories: Category[]; dealsCat
         {sortedStores?.length > 0 ? sortedStores.length : 0} {sortedStores?.length === 1 ? 'κατάστημα' : 'καταστήματα'}
       </h1>
       <div className="w-full flex justify-between items-start flex-wrap gap-10">
-        {sortedStores?.map((store) => (
-          <StoreItem key={store._id} store={store} dealsCatalog={dealsCatalog} />
-        ))}
+        <AnimatePresence>
+          {sortedStores?.map((store) => (
+            <StoreItem key={store._id} store={store} dealsCatalog={dealsCatalog} />
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );

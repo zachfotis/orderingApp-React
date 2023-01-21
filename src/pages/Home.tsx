@@ -12,7 +12,7 @@ function Home() {
 
   useEffect(() => {
     const getDealsCatalog = async () => {
-      const response = await fetch(`${baseURL}api/dealStores`);
+      const response = await fetch(`${baseURL}/api/dealStores`);
       const data = await response.json();
       setDealsCatalog(data);
     };
