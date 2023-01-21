@@ -1,7 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
-import MenuItemOptions from '../components/store1/MenuItemOptions';
+import MenuItemOptions from '../components/store/MenuItemOptions';
 import useLocalStorage from '../hooks/useLocalStorage';
 import { BasketActionProps, basketReducer, BasketStateProps } from '../reducers/basketReducer';
 import { ReducerActionProps, ReducerStateProps, userReducer } from '../reducers/userReducer';
