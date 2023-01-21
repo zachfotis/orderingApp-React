@@ -1,12 +1,14 @@
 import { AnimatePresence } from 'framer-motion';
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import Loader from '../components/Loader';
-import MenuItemOptions from '../components/Store/MenuItemOptions';
+import MenuItemOptions from '../components/store/MenuItemOptions';
 import useLocalStorage from '../hooks/useLocalStorage';
+import { BasketActionProps, basketReducer, BasketStateProps } from '../reducers/basketReducer';
+import { ReducerActionProps, ReducerStateProps, userReducer } from '../reducers/userReducer';
 
-import { Store, Address, Category, MenuItem, BasketItem, BasketSelectedItem } from '../types';
+import { Store, Category, MenuItem, BasketSelectedItem } from '../types';
 import { baseURL } from '../utilities/server';
-// ==================== TYPES ====================
+
 interface DeliveryContextProps {
   isDeliveryInitialized: boolean;
   isLoading: boolean;
@@ -30,179 +32,6 @@ interface DeliveryContextProps {
   setShowBasket: (value: boolean) => void;
 }
 
-interface ReducerStateProps {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  fullAddress: Address;
-}
-
-type ReducerActionProps =
-  | { type: 'SET_FIRST_NAME'; payload: string }
-  | { type: 'SET_LAST_NAME'; payload: string }
-  | { type: 'SET_EMAIL'; payload: string }
-  | { type: 'SET_PHONE'; payload: string }
-  | {
-      type: 'SET_ADDRESS';
-      payload: Address;
-    }
-  | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean }
-  | { type: 'DELETE_ADDRESS' };
-
-const reducer = (state: ReducerStateProps, action: ReducerActionProps) => {
-  switch (action.type) {
-    case 'SET_FIRST_NAME':
-      return { ...state, firstName: action.payload };
-    case 'SET_LAST_NAME':
-      return { ...state, lastName: action.payload };
-    case 'SET_EMAIL':
-      return { ...state, email: action.payload };
-    case 'SET_PHONE':
-      return { ...state, phone: action.payload };
-    case 'SET_ADDRESS':
-      return { ...state, fullAddress: action.payload };
-    case 'SET_ADDRESS_CONFIRMED':
-      return { ...state, fullAddress: { ...state.fullAddress, confirmed: action.payload } };
-    case 'DELETE_ADDRESS':
-      return {
-        ...state,
-        fullAddress: {
-          address: '',
-          number: '',
-          area: '',
-          city: '',
-          postalCode: '',
-          lat: 0,
-          lng: 0,
-          confirmed: false,
-        },
-      };
-    default:
-      return state;
-  }
-};
-
-interface BasketStateProps {
-  store: Store | null;
-  totalItems: BasketSelectedItem[] | [];
-}
-
-interface BasketActionProps {
-  type: 'ADD_ITEM' | 'INCREASE_QUANTITY' | 'DECREASE_QUANTITY' | 'REMOVE_ITEM' | 'REPLACE_ITEM';
-  payload: BasketItem;
-}
-
-const checkIfItemIsInBasket = (totalItems: BasketSelectedItem[], payload: BasketItem) => {
-  const inBasketItem = totalItems.find((item) => {
-    return checkIfItemsAreTheSame(item, payload.selectedItem);
-  });
-
-  if (inBasketItem) {
-    return true;
-  } else {
-    return false;
-  }
-};
-
-const checkIfItemsAreTheSame = (item1: BasketSelectedItem, item2: BasketSelectedItem) => {
-  return (
-    // Check all the options to see if they are the same
-    item1.itemName === item2.itemName &&
-    Object.keys(item1.options).every((optionKey) => {
-      return Object.keys(item1.options[optionKey]).every((optionValue) => {
-        return item1.options[optionKey][optionValue] === item2.options[optionKey][optionValue];
-      });
-    })
-  );
-};
-
-const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
-  switch (action.type) {
-    case 'ADD_ITEM':
-      // Check if the store is the same as the one in the basket
-      if (state?.store === action.payload.store) {
-        // Check if the item is already in the basket
-        const itemInBasket = checkIfItemIsInBasket(state.totalItems, action.payload);
-        if (itemInBasket) {
-          // If the item is already in the basket, update the quantity
-          const updatedItems = state.totalItems.map((item) => {
-            if (checkIfItemsAreTheSame(item, action.payload.selectedItem)) {
-              return { ...item, quantity: item.quantity + action.payload.selectedItem.quantity };
-            }
-            return item;
-          });
-
-          return {
-            ...state,
-            totalItems: updatedItems,
-          };
-        } else {
-          return {
-            ...state,
-            totalItems: [...state.totalItems, action.payload.selectedItem],
-          };
-        }
-        // If the store is different, clear the basket and add the new item
-      } else {
-        return {
-          store: action.payload.store,
-          totalItems: [action.payload.selectedItem],
-        };
-      }
-    case 'INCREASE_QUANTITY': {
-      const updatedItems = state.totalItems.map((item) => {
-        if (item.id === action.payload.selectedItem.id) {
-          return { ...item, quantity: item.quantity + 1 };
-        }
-        return item;
-      });
-      return {
-        ...state,
-        totalItems: updatedItems,
-      };
-    }
-    case 'DECREASE_QUANTITY': {
-      const updatedItems = state.totalItems.map((item) => {
-        if (item.id === action.payload.selectedItem.id) {
-          if (item.quantity === 1) return item;
-
-          return { ...item, quantity: item.quantity - 1 };
-        }
-        return item;
-      });
-      return {
-        ...state,
-        totalItems: updatedItems,
-      };
-    }
-    case 'REMOVE_ITEM': {
-      const updatedItems = state.totalItems.filter((item) => {
-        return item.id !== action.payload.selectedItem.id;
-      });
-      return {
-        ...state,
-        totalItems: updatedItems,
-      };
-    }
-    case 'REPLACE_ITEM': {
-      const updatedItems = state.totalItems.map((item) => {
-        if (item.id === action.payload.selectedItem.id) {
-          return action.payload.selectedItem;
-        }
-        return item;
-      });
-      return {
-        ...state,
-        totalItems: updatedItems,
-      };
-    }
-    default:
-      return state;
-  }
-};
-
-// ==================== DeliveryContext ====================
 const DeliveryContext = createContext({} as DeliveryContextProps);
 
 const useDeliveryContext = () => {
@@ -211,8 +40,6 @@ const useDeliveryContext = () => {
 
 export { useDeliveryContext };
 
-// ==================== DeliveryProvider ====================
-
 function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeliveryInitialized, setIsDeliveryInitialized] = useState(false);
@@ -220,7 +47,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const { storedValue } = useLocalStorage('address', '');
 
   // State for the user info
-  const [userInfoState, userInfoDispatch] = useReducer(reducer, {
+  const [userInfoState, userInfoDispatch] = useReducer(userReducer, {
     firstName: '',
     lastName: '',
     email: '',

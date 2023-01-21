@@ -161,7 +161,7 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
             selectedItem: {
               id: uuidv4(),
               itemName: item.name,
-              itemPrice: item.price,
+              itemPrice: getOptionsPrice(),
               quantity,
               options: menuItemsSelected,
             },
@@ -175,7 +175,7 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
             selectedItem: {
               id: replaceItem.id,
               itemName: item.name,
-              itemPrice: item.price,
+              itemPrice: getOptionsPrice(),
               quantity,
               options: menuItemsSelected,
             },
@@ -195,11 +195,10 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
     setActiveMenuItem(null);
   };
 
-  // Update Price
-  useEffect(() => {
-    if (!menuItemsSelected || !item) return;
+  const getOptionsPrice = () => {
+    if (!menuItemsSelected || !item) return 0;
 
-    const price = Object.keys(menuItemsSelected).reduce((acc, optionTitle) => {
+    return Object.keys(menuItemsSelected).reduce((acc, optionTitle) => {
       Object.keys(menuItemsSelected[optionTitle]).forEach((optionItem) => {
         const optionPrice = item.options?.[optionTitle]?.[optionItem] || 0;
         if (menuItemsSelected[optionTitle][optionItem]) {
@@ -208,6 +207,11 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
       });
       return acc;
     }, item.price);
+  };
+
+  // Update Price
+  useEffect(() => {
+    const price = getOptionsPrice();
     setMenuItemPrice(Number((price * quantity).toFixed(2)));
   }, [menuItemsSelected, quantity]);
 

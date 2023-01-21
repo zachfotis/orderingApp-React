@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDeliveryContext } from '../context/DeliveryContext';
 import { motion } from 'framer-motion';
-import Header from '../components/Store/Header';
-import Categories from '../components/Store/Categories';
+import Header from '../components/store/Header';
+import Categories from '../components/store/Categories';
 import { baseURL } from '../utilities/server';
-import Menu from '../components/Store/Menu';
+import Menu from '../components/store/Menu';
 
 import { Catalog } from '../types';
 import Basket from '../components/Basket/Basket';
