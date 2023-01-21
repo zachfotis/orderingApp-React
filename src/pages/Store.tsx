@@ -8,7 +8,7 @@ import { baseURL } from '../utilities/server';
 import Menu from '../components/store/Menu';
 
 import { Catalog } from '../types';
-import Basket from '../components/Basket/Basket';
+import Basket from '../components/basket/Basket';
 
 function Store() {
   const { id } = useParams<{ id: string }>();
