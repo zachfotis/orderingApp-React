@@ -9,19 +9,18 @@ function CheckoutOrder() {
 
   const position: [number, number] = [userInfoState?.fullAddress.lat, userInfoState?.fullAddress.lng];
   return (
-    <div className="w-[400px] bg-slate-50 flex flex-col justify-between items-center gap-7 p-5 md:mt-10 rounded-lg">
+    <div className="w-full max-w-[600px] bg-slate-50 flex flex-col justify-between items-center gap-7 p-5 md:mt-10 rounded-lg">
       {/* Top Part */}
       <div className="w-full flex flex-col justify-start items-start gap-2">
         <h1 className="text-2xl font-[500]">Παραγγελία</h1>
         <div className="w-full">
           {/* address */}
-          <div className="w-full p-3 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-2">
-            <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 mb-3 py-1 border-b border-b-1 border-b-greyLight">
+          <div className="w-full p-3 md:p-5 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-2">
+            <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 mb-3 py-1 border-b border-b-1 border-b-slate-200">
               <FcHome className="text-xl" />
               Διεύθυνση Παράδοσης
             </h1>
-            {/* map */}
-            <div className="w-full h-[150px] z-0">
+            <div className="w-full h-[150px] md:h-[250px] z-0 rounded-lg overflow-hidden">
               <MapContainer
                 center={position}
                 zoom={13}
@@ -35,7 +34,7 @@ function CheckoutOrder() {
                 <Marker position={position} />
               </MapContainer>
             </div>
-            <div>
+            <div className="mt-2">
               <p className="text-sm font-[500]">
                 {userInfoState?.fullAddress.address +
                   ' ' +
@@ -48,8 +47,8 @@ function CheckoutOrder() {
           </div>
           {/* Στοιχεία Πελάτη */}
           <div className="w-full mt-5">
-            <div className="w-full p-3 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-5">
-              <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 py-1 border-b border-b-1 border-b-greyLight">
+            <div className="w-full p-3 md:p-5 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-5">
+              <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 py-1 border-b border-b-1 border-b-slate-200">
                 <FcInfo className="text-xl" />
                 Πληροφορίες Πελάτη
               </h1>
@@ -60,7 +59,7 @@ function CheckoutOrder() {
                   type="text"
                   autoComplete="given-name"
                   className="
-                      w-full h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent"
+                      w-full sm:max-w-[250px] h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent"
                   value={userInfoState?.firstName}
                   onChange={(e) => userInfoDispatch({ type: 'SET_FIRST_NAME', payload: e.target.value })}
                   required
@@ -71,7 +70,7 @@ function CheckoutOrder() {
                   type="text"
                   autoComplete="family-name"
                   className="
-                    w-full h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent"
+                    w-full sm:max-w-[250px] h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent"
                   value={userInfoState?.lastName}
                   onChange={(e) => userInfoDispatch({ type: 'SET_LAST_NAME', payload: e.target.value })}
                   required
@@ -82,7 +81,7 @@ function CheckoutOrder() {
                   type="text"
                   autoComplete="tel"
                   className={`
-                    w-full h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent
+                    w-full sm:max-w-[250px] h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent
                     ${
                       userInfoState?.phone.length >= 10 &&
                       !userInfoState?.isPhoneValid &&
@@ -98,7 +97,7 @@ function CheckoutOrder() {
                   type="email"
                   autoComplete="email"
                   className={`
-                    w-full h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent
+                    w-full sm:max-w-[250px] h-[30px] p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent
                     ${
                       userInfoState?.email.length >= 1 &&
                       !userInfoState?.isEmailValid &&
@@ -114,8 +113,8 @@ function CheckoutOrder() {
           </div>
           {/* Cash */}
           <div className="w-full mt-5">
-            <div className="w-full p-3 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-5">
-              <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 py-1 border-b border-b-1 border-b-greyLight">
+            <div className="w-full p-3 md:p-5 bg-white rounded-lg shadow-sm flex flex-col justify-start items-stretch gap-5">
+              <h1 className="text-base text-greyDark font-[500] flex justify-start items-center gap-2 py-1 border-b border-b-1 border-b-slate-200">
                 <FcMoneyTransfer className="text-xl" />
                 Τρόπος Πληρωμής
               </h1>

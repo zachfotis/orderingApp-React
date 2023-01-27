@@ -6,7 +6,7 @@ import CheckoutItems from './CheckoutItems';
 function CheckoutBasket() {
   const { basketState } = useDeliveryContext();
   return (
-    <div className="w-[400px] bg-slate-50 flex flex-col justify-between items-center gap-7 p-5 md:mt-10 rounded-lg">
+    <div className="w-full max-w-[600px] bg-slate-50 flex flex-col justify-between items-center gap-7 p-5 md:mt-10 rounded-lg">
       {/* Top Part */}
       <div className="w-full flex flex-col justify-start items-start gap-2">
         <h1 className="text-2xl font-[500]">Καλάθι</h1>

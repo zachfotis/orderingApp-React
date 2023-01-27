@@ -10,7 +10,6 @@ import { BasketSelectedItem, Category, MenuItem, Store } from '../types';
 import { baseURL } from '../utilities/server';
 
 interface DeliveryContextProps {
-  isDeliveryInitialized: boolean;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
   userInfoState: ReducerStateProps;
@@ -92,7 +91,20 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   // State for order submission ready
   const [readyToSubmit, setReadyToSubmit] = useState(false);
 
+  // State for backend status
+  const [isBackendConnected, setIsBackendConnected] = useState(false);
+
   // Fetch the stores and categories on startup
+  useEffect(() => {
+    const checkBackendStatus = async () => {
+      const response = await fetch(`${baseURL}/api/status`);
+      const data = await response.json();
+      setIsBackendConnected(data.status);
+    };
+
+    checkBackendStatus();
+  }, []);
+
   useEffect(() => {
     const getStores = async () => {
       const response = await fetch(`${baseURL}/api/stores`);
@@ -108,18 +120,20 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       setCategories(categoriesArray);
     };
 
-    getStores();
-    getCategories();
-  }, []);
+    if (isBackendConnected) {
+      getStores();
+      getCategories();
+    }
+  }, [isBackendConnected]);
 
   // Check if the delivery is initialized
   useEffect(() => {
-    if (stores.length > 0 && categories.length > 0 && userInfoState.fullAddress.confirmed) {
+    if (stores.length > 0 && categories.length > 0) {
       setIsDeliveryInitialized(true);
     } else {
       setIsDeliveryInitialized(false);
     }
-  }, [stores, categories, userInfoState.fullAddress.confirmed]);
+  }, [stores, categories]);
 
   // Check if user Info is valid
   useEffect(() => {
@@ -162,7 +176,6 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
 
   const providerValues = useMemo(
     () => ({
-      isDeliveryInitialized,
       isLoading,
       setIsLoading,
       userInfoState,
@@ -202,13 +215,19 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <DeliveryContext.Provider value={providerValues}>
-      <>
-        {isLoading && <Loader />}
-        <AnimatePresence>
-          {showOptions && <MenuItemOptions item={activeMenuItem} replaceItem={replaceMenuItem} />}
-        </AnimatePresence>
-        {children}
-      </>
+      {!isBackendConnected ? (
+        <Loader text="Connecting to backend server..." variant="server" />
+      ) : isDeliveryInitialized ? (
+        <>
+          {isLoading && <Loader />}
+          <AnimatePresence>
+            {showOptions && <MenuItemOptions item={activeMenuItem} replaceItem={replaceMenuItem} />}
+          </AnimatePresence>
+          {children}
+        </>
+      ) : (
+        <Loader text="Loading stores..." />
+      )}
     </DeliveryContext.Provider>
   );
 }

@@ -1,8 +1,8 @@
+import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useFirebase from '../hooks/useFirebase';
-import { toast } from 'react-toastify';
 
 // ==================== TYPES ====================
 interface FirebaseContextProps {
@@ -76,7 +76,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         user,
       }}
     >
-      {isFirebaseInitialized ? children : <Loader />}
+      {isFirebaseInitialized ? children : <Loader text="Connecting to Firestore..." />}
     </FirebaseContext.Provider>
   );
 }
