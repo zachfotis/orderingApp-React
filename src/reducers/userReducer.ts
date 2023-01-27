@@ -5,6 +5,9 @@ export interface ReducerStateProps {
   lastName: string;
   email: string;
   phone: string;
+  payment: string;
+  isPhoneValid: boolean;
+  isEmailValid: boolean;
   fullAddress: Address;
 }
 
@@ -18,7 +21,10 @@ export type ReducerActionProps =
       payload: Address;
     }
   | { type: 'SET_ADDRESS_CONFIRMED'; payload: boolean }
-  | { type: 'DELETE_ADDRESS' };
+  | { type: 'DELETE_ADDRESS' }
+  | { type: 'SET_PAYMENT'; payload: string }
+  | { type: 'SET_IS_PHONE_VALID'; payload: boolean }
+  | { type: 'SET_IS_EMAIL_VALID'; payload: boolean };
 
 export const userReducer = (state: ReducerStateProps, action: ReducerActionProps) => {
   switch (action.type) {
@@ -48,6 +54,12 @@ export const userReducer = (state: ReducerStateProps, action: ReducerActionProps
           confirmed: false,
         },
       };
+    case 'SET_PAYMENT':
+      return { ...state, payment: action.payload };
+    case 'SET_IS_PHONE_VALID':
+      return { ...state, isPhoneValid: action.payload };
+    case 'SET_IS_EMAIL_VALID':
+      return { ...state, isEmailValid: action.payload };
     default:
       return state;
   }

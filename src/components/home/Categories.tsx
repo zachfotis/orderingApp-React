@@ -1,6 +1,6 @@
-import CategoryItem from './CategoryItem';
 import { motion } from 'framer-motion';
 import { Typewriter } from 'react-simple-typewriter';
+import CategoryItem from './CategoryItem';
 
 import { Category } from '../../types';
 
@@ -12,11 +12,19 @@ interface CategoriesProps {
 function Categories({ categories, setCategories }: CategoriesProps) {
   return (
     <div className="w-full max-w-[1280px] flex flex-col md:py-5 justify-start items-start">
-      <h1 className="ml-5 hidden md:block">
+      <h1 className="text-xl text-greyDark font-[500] md:mt-5 ml-5 hidden md:block">
         <Typewriter
-          words={['', 'Τί θα φάμε σήμερα;', 'Ή μήπως να πιούμε κάτι;', 'Επέλεξε τον τύπο φαγητού που σου αρέσει:']}
+          words={[
+            '',
+            'Τί θα φάμε σήμερα; 🍕',
+            'Ή μήπως να πιούμε κάτι; 🍺',
+            'Επέλεξε τον τύπο φαγητού που σου ταιριάζει:',
+          ]}
           delaySpeed={2000}
-          typeSpeed={100}
+          typeSpeed={120}
+          cursor={true}
+          cursorStyle="|"
+          cursorColor="#000"
         />
         &nbsp;
       </h1>

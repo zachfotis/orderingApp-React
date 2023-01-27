@@ -6,7 +6,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import { BasketActionProps, basketReducer, BasketStateProps } from '../reducers/basketReducer';
 import { ReducerActionProps, ReducerStateProps, userReducer } from '../reducers/userReducer';
 
-import { Store, Category, MenuItem, BasketSelectedItem } from '../types';
+import { BasketSelectedItem, Category, MenuItem, Store } from '../types';
 import { baseURL } from '../utilities/server';
 
 interface DeliveryContextProps {
@@ -30,6 +30,7 @@ interface DeliveryContextProps {
   basketDispatch: (value: BasketActionProps) => void;
   showBasket: boolean;
   setShowBasket: (value: boolean) => void;
+  readyToSubmit: boolean;
 }
 
 const DeliveryContext = createContext({} as DeliveryContextProps);
@@ -52,6 +53,9 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
     lastName: '',
     email: '',
     phone: '',
+    payment: 'cash',
+    isPhoneValid: false,
+    isEmailValid: false,
     fullAddress: storedValue
       ? JSON.parse(storedValue)
       : {
@@ -85,6 +89,10 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [activeMenuItem, setActiveMenuItem] = useState<MenuItem | null>(null);
   const [replaceMenuItem, setReplaceMenuItem] = useState<BasketSelectedItem | null>(null);
 
+  // State for order submission ready
+  const [readyToSubmit, setReadyToSubmit] = useState(false);
+
+  // Fetch the stores and categories on startup
   useEffect(() => {
     const getStores = async () => {
       const response = await fetch(`${baseURL}/api/stores`);
@@ -113,6 +121,45 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
     }
   }, [stores, categories, userInfoState.fullAddress.confirmed]);
 
+  // Check if user Info is valid
+  useEffect(() => {
+    // check if phone is valid
+    if (userInfoState.phone.length === 10) {
+      const phoneRegex = new RegExp(/^[0-9]{10}$/);
+      const isPhoneValid = phoneRegex.test(userInfoState.phone);
+      if (isPhoneValid) {
+        userInfoDispatch({ type: 'SET_IS_PHONE_VALID', payload: isPhoneValid });
+      }
+    }
+    // check if email is valid
+    if (userInfoState.email.length > 0) {
+      const emailRegex = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
+      const isEmailValid = emailRegex.test(userInfoState.email);
+      if (isEmailValid) {
+        userInfoDispatch({ type: 'SET_IS_EMAIL_VALID', payload: isEmailValid });
+      }
+    }
+  }, [userInfoState.phone, userInfoState.email]);
+
+  // Check if the order is ready to submit
+  useEffect(() => {
+    if (
+      basketState.totalItems.length > 0 &&
+      userInfoState.fullAddress.confirmed &&
+      userInfoState.firstName &&
+      userInfoState.lastName &&
+      userInfoState.phone &&
+      userInfoState.email &&
+      userInfoState.payment &&
+      userInfoState.isPhoneValid &&
+      userInfoState.isEmailValid
+    ) {
+      setReadyToSubmit(true);
+    } else {
+      setReadyToSubmit(false);
+    }
+  }, [userInfoState, basketState]);
+
   const providerValues = useMemo(
     () => ({
       isDeliveryInitialized,
@@ -135,6 +182,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       setReplaceMenuItem,
       showBasket,
       setShowBasket,
+      readyToSubmit,
     }),
     [
       isLoading,
@@ -148,6 +196,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       basketState,
       replaceMenuItem,
       showBasket,
+      readyToSubmit,
     ],
   );
 
