@@ -1,14 +1,14 @@
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDeliveryContext } from '../context/DeliveryContext';
-import { motion } from 'framer-motion';
-import Header from '../components/store/Header';
 import Categories from '../components/store/Categories';
-import { baseURL } from '../utilities/server';
+import Header from '../components/store/Header';
 import Menu from '../components/store/Menu';
+import { useDeliveryContext } from '../context/DeliveryContext';
+import { baseURL } from '../utilities/server';
 
-import { Catalog } from '../types';
 import Basket from '../components/basket/Basket';
+import { Catalog } from '../types';
 
 function Store() {
   const { id } = useParams<{ id: string }>();

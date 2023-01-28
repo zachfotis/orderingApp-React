@@ -96,13 +96,28 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch the stores and categories on startup
   useEffect(() => {
+    let timeoutID: NodeJS.Timeout;
+
     const checkBackendStatus = async () => {
-      const response = await fetch(`${baseURL}/api/status`);
-      const data = await response.json();
-      setIsBackendConnected(data.status);
+      try {
+        const response = await fetch(`${baseURL}/api/status`);
+        const data = await response.json();
+        setIsBackendConnected(data.status);
+
+        // ping the backend every 10 minutes
+        timeoutID = setTimeout(() => {
+          checkBackendStatus();
+        }, 600000); //10 minutes
+      } catch {
+        checkBackendStatus();
+      }
     };
 
     checkBackendStatus();
+
+    return () => {
+      clearTimeout(timeoutID);
+    };
   }, []);
 
   useEffect(() => {
@@ -138,11 +153,13 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   // Check if user Info is valid
   useEffect(() => {
     // check if phone is valid
-    if (userInfoState.phone.length === 10) {
+    if (userInfoState.phone.length > 0) {
       const phoneRegex = new RegExp(/^[0-9]{10}$/);
       const isPhoneValid = phoneRegex.test(userInfoState.phone);
-      if (isPhoneValid) {
+      if (isPhoneValid && userInfoState.phone.length === 10) {
         userInfoDispatch({ type: 'SET_IS_PHONE_VALID', payload: isPhoneValid });
+      } else {
+        userInfoDispatch({ type: 'SET_IS_PHONE_VALID', payload: false });
       }
     }
     // check if email is valid
@@ -151,13 +168,17 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       const isEmailValid = emailRegex.test(userInfoState.email);
       if (isEmailValid) {
         userInfoDispatch({ type: 'SET_IS_EMAIL_VALID', payload: isEmailValid });
+      } else {
+        userInfoDispatch({ type: 'SET_IS_EMAIL_VALID', payload: false });
       }
     }
+    console.log('phone', userInfoState.phone);
   }, [userInfoState.phone, userInfoState.email]);
 
   // Check if the order is ready to submit
   useEffect(() => {
     if (
+      basketState.store?._id &&
       basketState.totalItems.length > 0 &&
       userInfoState.fullAddress.confirmed &&
       userInfoState.firstName &&
@@ -216,7 +237,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   return (
     <DeliveryContext.Provider value={providerValues}>
       {!isBackendConnected ? (
-        <Loader text="Connecting to backend server..." variant="server" />
+        <Loader text="Waiting for the backend server..." variant="server" />
       ) : isDeliveryInitialized ? (
         <>
           {isLoading && <Loader />}

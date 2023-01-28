@@ -5,10 +5,14 @@ export interface BasketStateProps {
   totalItems: BasketSelectedItem[] | [];
 }
 
-export interface BasketActionProps {
-  type: 'ADD_ITEM' | 'INCREASE_QUANTITY' | 'DECREASE_QUANTITY' | 'REMOVE_ITEM' | 'REPLACE_ITEM';
-  payload: BasketItem;
-}
+export type BasketActionProps =
+  | {
+      type: 'ADD_ITEM' | 'INCREASE_QUANTITY' | 'DECREASE_QUANTITY' | 'REMOVE_ITEM' | 'REPLACE_ITEM';
+      payload: BasketItem;
+    }
+  | {
+      type: 'CLEAR_BASKET';
+    };
 
 export const basketReducer = (state: BasketStateProps, action: BasketActionProps) => {
   switch (action.type) {
@@ -90,6 +94,11 @@ export const basketReducer = (state: BasketStateProps, action: BasketActionProps
         totalItems: updatedItems,
       };
     }
+    case 'CLEAR_BASKET':
+      return {
+        store: null,
+        totalItems: [],
+      };
     default:
       return state;
   }

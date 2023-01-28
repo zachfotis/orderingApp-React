@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
+import { MdOutlineClose } from 'react-icons/md';
+import { v4 as uuidv4 } from 'uuid';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { BasketSelectedItem, MenuItem, MenuItemsSelected } from '../../types';
-import { MdOutlineClose } from 'react-icons/md';
-import { HiMinusSm, HiPlusSm } from 'react-icons/hi';
-import { motion } from 'framer-motion';
-import { v4 as uuidv4 } from 'uuid';
 
 interface MenuItemOptionsProps {
   item: MenuItem | null;
@@ -217,7 +217,9 @@ function MenuItemOptions({ item, replaceItem = null }: MenuItemOptionsProps) {
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
+    if (window.innerWidth > 768) {
+      document.body.style.overflow = 'hidden';
+    }
 
     return () => {
       document.body.style.overflow = 'unset';
