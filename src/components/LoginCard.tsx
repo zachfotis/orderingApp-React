@@ -1,10 +1,11 @@
-import { useFirebaseContext } from '../context/FirebaseContext';
-import { FaFacebookF } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
-import { MdEmail, MdDelete } from 'react-icons/md';
 import { motion } from 'framer-motion';
-import { useDeliveryContext } from '../context/DeliveryContext';
+import { FaFacebookF } from 'react-icons/fa';
+import { FcGoogle, FcHome } from 'react-icons/fc';
+import { MdEmail } from 'react-icons/md';
+import { RiDeleteBack2Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
+import { useDeliveryContext } from '../context/DeliveryContext';
+import { useFirebaseContext } from '../context/FirebaseContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: boolean) => void }) {
@@ -29,20 +30,25 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
           Παράγγειλε <br className="md:hidden" /> Delivery <br /> online σε 1&apos;
         </h1>
         {userInfoState.fullAddress.confirmed && (
-          <div className="w-full flex justify-center items-center gap-2">
-            <p className="text-sm text-greyLight text-center">
-              {userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number},{' '}
-              {userInfoState.fullAddress.area !== userInfoState.fullAddress.city ? userInfoState.fullAddress.area : ''}{' '}
-              {userInfoState.fullAddress.postalCode}, {userInfoState.fullAddress.city}{' '}
-            </p>
-            <MdDelete
-              className="text-xl text-red-500 cursor-pointer"
-              onClick={() => {
-                userInfoDispatch({ type: 'DELETE_ADDRESS' });
-                setValue('');
-                setShowAddressManager(true);
-              }}
-            />
+          <div className="w-full flex flex-col justify-center items-center gap-2">
+            <FcHome className="text-4xl" />
+            <div className="flex justify-center items-center gap-3">
+              <p className="text-base font-[400]">
+                {userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number},{' '}
+                {userInfoState.fullAddress.area !== userInfoState.fullAddress.city
+                  ? userInfoState.fullAddress.area
+                  : ''}{' '}
+                {userInfoState.fullAddress.postalCode}, {userInfoState.fullAddress.city}{' '}
+              </p>
+              <RiDeleteBack2Line
+                className="text-lg text-red-500 cursor-pointer"
+                onClick={() => {
+                  userInfoDispatch({ type: 'DELETE_ADDRESS' });
+                  setValue('');
+                  setShowAddressManager(true);
+                }}
+              />
+            </div>
           </div>
         )}
         <button

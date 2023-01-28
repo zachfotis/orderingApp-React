@@ -172,7 +172,6 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
         userInfoDispatch({ type: 'SET_IS_EMAIL_VALID', payload: false });
       }
     }
-    console.log('phone', userInfoState.phone);
   }, [userInfoState.phone, userInfoState.email]);
 
   // Check if the order is ready to submit

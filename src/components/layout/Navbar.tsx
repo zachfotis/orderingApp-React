@@ -1,10 +1,10 @@
-import { useDeliveryContext } from '../../context/DeliveryContext';
-import { HiSearch } from 'react-icons/hi';
-import { FaUser } from 'react-icons/fa';
-import { MdLocationOn } from 'react-icons/md';
 import { FormControl, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
-import { useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { FaUser } from 'react-icons/fa';
+import { HiSearch } from 'react-icons/hi';
+import { MdLocationOn } from 'react-icons/md';
+import { useLocation } from 'react-router-dom';
+import { useDeliveryContext } from '../../context/DeliveryContext';
 
 function Navbar() {
   const { userInfoState } = useDeliveryContext();
@@ -49,10 +49,12 @@ function Navbar() {
               </div>
             </div>
             <div className="flex justify-center items-center gap-3 md:order-3">
-              <div className="hidden md:flex flex-col justify-start items-end">
-                <h1 className="text-sm">Φώτης</h1>
-                <h1 className="text-sm">Ζαχόπουλος</h1>
-              </div>
+              {userInfoState?.firstName && userInfoState?.lastName && (
+                <div className="hidden md:flex flex-col justify-start items-end">
+                  <h1 className="text-sm">{userInfoState.firstName}</h1>
+                  <h1 className="text-sm">{userInfoState.lastName}</h1>
+                </div>
+              )}
               <FaUser className="text-2xl cursor-pointer" />
             </div>
           </div>
