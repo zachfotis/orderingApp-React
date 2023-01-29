@@ -7,7 +7,7 @@ It is built using React, a popular JavaScript library for building user interfac
 The backend is built using Express.js, a Node.js framework for building web applications, and MongoDB, a NoSQL database, is used to store the data. 
 Firebase, a platform for developing mobile and web applications, is used for user authentication and login.
 
-The app's interface allows users to view a list of available restaurants, browse their menus, and place orders for delivery or pickup. 
+The app's interface allows users to view a list of available restaurants, browse their menus, and place orders for delivery. 
 Users can also view their previous orders and track their current orders in real-time. 
 The app also allows users to create an account and save their personal information and preferred delivery addresses for a faster checkout experience.
 
@@ -87,7 +87,9 @@ Several features of the app have not been implemented yet. The features to be de
 - User Registration and Login using Firebase
 - Previous orders page (client)
 - Change user info page (client)
+- Add/remove favorite store functionality and page (client)
 - Logout option (client)
-- Validate user (backend)
-- Add order on MongoDB (backend)
-- Secure backend routes (backend)
+- Implement Stripe and Paypal payment methods (client and server)
+- Validate user (server)
+- Add order on MongoDB (server)
+- Secure backend routes (server)
