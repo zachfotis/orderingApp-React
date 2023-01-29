@@ -1,14 +1,18 @@
-import Categories from '../components/home/Categories';
 import { motion } from 'framer-motion';
+import Categories from '../components/home/Categories';
 import Stores from '../components/home/Stores';
 
-import { useDeliveryContext } from '../context/DeliveryContext';
 import { useEffect, useState } from 'react';
+import { useDeliveryContext } from '../context/DeliveryContext';
 import { baseURL } from '../utilities/server';
 
 function Home() {
   const { categories, setCategories } = useDeliveryContext();
   const [dealsCatalog, setDealsCatalog] = useState([]);
+
+  // This code is used to get the deals catalog from the backend
+  // The response is then stored in the dealsCatalog state variable
+  // The useEffect hook is used to make sure the code is run only once
 
   useEffect(() => {
     const getDealsCatalog = async () => {
