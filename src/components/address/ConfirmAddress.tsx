@@ -1,11 +1,11 @@
-import { useDeliveryContext } from '../../context/DeliveryContext';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
 import { motion } from 'framer-motion';
+import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { useDeliveryContext } from '../../context/DeliveryContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 
 function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
-  const { setValue } = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
+  const addressStorage = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
   const position: [number, number] = [Number(userInfoState.fullAddress.lat), Number(userInfoState.fullAddress.lng)];
 
   return (
@@ -40,7 +40,7 @@ function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: bo
             className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
             onClick={() => {
               userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
-              setValue(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
+              addressStorage.setValue(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
             }}
           >
             Επιβεβαίωση Διεύθυνσης

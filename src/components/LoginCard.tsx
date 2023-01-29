@@ -68,17 +68,26 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
         <div className="w-full flex flex-col justify-start items-center gap-4">
           <p className="w-full text-sm text-left text-greyLight">Σύνδεση ή δημιουργία λογαριασμού</p>
 
-          <button className="bg-blue text-white w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center">
+          <button
+            className="bg-blue text-white w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center cursor-not-allowed"
+            disabled
+          >
             <FaFacebookF className="text-2xl" />
             <p className="w-full">Σύνδεση με Facebook</p>
           </button>
 
-          <button className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight">
+          <button
+            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight cursor-not-allowed"
+            disabled
+          >
             <FcGoogle className="text-2xl" />
             <p className="w-full">Σύνδεση με Google</p>
           </button>
 
-          <button className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight">
+          <button
+            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight cursor-not-allowed"
+            disabled
+          >
             <MdEmail className="text-2xl" />
             <p className="w-full">Σύνδεση/Εγγραφή με Email</p>
           </button>

@@ -44,19 +44,20 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeliveryInitialized, setIsDeliveryInitialized] = useState(false);
 
-  const { storedValue } = useLocalStorage('address', '');
+  const addressStorage = useLocalStorage('address', '');
+  const userStorage = useLocalStorage('userInfo', '');
 
   // State for the user info
   const [userInfoState, userInfoDispatch] = useReducer(userReducer, {
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName: userStorage.storedValue ? JSON.parse(userStorage.storedValue)?.firstName : '',
+    lastName: userStorage.storedValue ? JSON.parse(userStorage.storedValue)?.lastName : '',
+    email: userStorage.storedValue ? JSON.parse(userStorage.storedValue)?.email : '',
+    phone: userStorage.storedValue ? JSON.parse(userStorage.storedValue)?.phone : '',
     payment: 'cash',
     isPhoneValid: false,
     isEmailValid: false,
-    fullAddress: storedValue
-      ? JSON.parse(storedValue)
+    fullAddress: addressStorage.storedValue
+      ? JSON.parse(addressStorage.storedValue)
       : {
           address: '',
           number: '',
@@ -173,6 +174,18 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [userInfoState.phone, userInfoState.email]);
+
+  // Update the user info in the local storage when it changes
+  useEffect(() => {
+    userStorage.setValue(
+      JSON.stringify({
+        firstName: userInfoState.firstName,
+        lastName: userInfoState.lastName,
+        phone: userInfoState.phone,
+        email: userInfoState.email,
+      }),
+    );
+  }, [userInfoState.firstName, userInfoState.lastName, userInfoState.phone, userInfoState.email]);
 
   // Check if the order is ready to submit
   useEffect(() => {

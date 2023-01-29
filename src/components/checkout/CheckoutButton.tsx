@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { useFirebaseContext } from '../../context/FirebaseContext';
@@ -11,8 +12,9 @@ interface CheckoutButtonProps {
 }
 
 function CheckoutButton({ setIsOrderPlaced, setOrderResponseData }: CheckoutButtonProps) {
-  const { basketState, readyToSubmit, basketDispatch } = useDeliveryContext();
+  const { basketState, readyToSubmit, basketDispatch, setIsLoading } = useDeliveryContext();
   const { user } = useFirebaseContext();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const basketQuantity = (basketState.totalItems as BasketSelectedItem[]).reduce((acc, item) => acc + item.quantity, 0);
   const basketTotal = (basketState.totalItems as BasketSelectedItem[]).reduce(
@@ -30,6 +32,8 @@ function CheckoutButton({ setIsOrderPlaced, setOrderResponseData }: CheckoutButt
     };
 
     try {
+      setIsLoading(true);
+      setIsButtonDisabled(true);
       const res = await fetch(baseURL + '/api/placeOrder', {
         method: 'POST',
         headers: {
@@ -49,19 +53,21 @@ function CheckoutButton({ setIsOrderPlaced, setOrderResponseData }: CheckoutButt
       }
     } catch (error) {
       toast.error('Παρουσιάστηκε κάποιο πρόβλημα. Παρακαλώ προσπαθήστε ξανά.');
+    } finally {
+      setIsLoading(false);
+      setIsButtonDisabled(false);
     }
   };
 
   return (
     <motion.button
       className="w-full md:w-[400px] bg-yellow text-black py-3 px-5 rounded-lg font-[500] text-base hover:bg-yellowHover flex justify-between items-center
-      disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-greyLight disabled:text-greyDark
-      "
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-greyLight disabled:text-greyDark"
       initial={{ opacity: 0, y: '100%' }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: '100%' }}
       transition={{ duration: 0.3 }}
-      disabled={!readyToSubmit}
+      disabled={!readyToSubmit || isButtonDisabled}
       onClick={placeOrder}
     >
       <p className="px-2 py-1 rounded-lg bg-slate-50">{basketQuantity}</p>
