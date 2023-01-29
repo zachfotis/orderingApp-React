@@ -44,6 +44,7 @@ export type MenuItem = {
   isSingleOption?: {
     [key: string]: boolean;
   };
+  image: string;
 };
 
 export type OptionItem = {

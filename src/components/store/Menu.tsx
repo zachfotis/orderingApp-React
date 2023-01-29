@@ -2,6 +2,7 @@ import { FcMenu } from 'react-icons/fc';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 
 import { Catalog, MenuItem } from '../../types';
+import { baseURL } from '../../utilities/server';
 
 function Menu({ catalog }: { catalog: Catalog }) {
   const { setActiveMenuItem, setShowOptions, setReplaceMenuItem } = useDeliveryContext();
@@ -38,7 +39,7 @@ function Menu({ catalog }: { catalog: Catalog }) {
                         <p className="text-base font-[400]">Από {item.price}€</p>
                       </div>
                       <img
-                        src={`https://source.unsplash.com/100x100/?${item.name},food,coffee`}
+                        src={baseURL + '/' + item.image}
                         alt=""
                         className="w-[100px] h-[100px] object-cover rounded-md"
                       />
