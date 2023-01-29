@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CheckIcon from '../../assets/icons/check.png';
@@ -19,7 +20,12 @@ function OrderCompleted({ orderResponseData }: OrderCompletedProps) {
     return () => clearInterval(interval);
   }, []);
   return (
-    <div className="flex-1 h-full w-full flex flex-col justify-center items-center gap-10 bg-slate-50 text-greyDark text-2xl px-5">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 2 }}
+      className="flex-1 h-full w-full flex flex-col justify-center items-center gap-10 bg-slate-50 text-greyDark text-2xl px-5"
+    >
       <div
         className="relative w-[300px] md:w-[350px] h-[300px] md:h-[350px] rounded-full transition duration-500 ease-in-out shadow-lg"
         style={{
@@ -60,7 +66,7 @@ function OrderCompleted({ orderResponseData }: OrderCompletedProps) {
       >
         Επιστροφή στην αρχική
       </button>
-    </div>
+    </motion.div>
   );
 }
 export default OrderCompleted;

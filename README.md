@@ -94,7 +94,7 @@ The app uses the context API for state management. The context is set up in the 
 
 ## Deployment
 
-The app is currently deployed on Vercel.com (client) and Render.com (server).
+The app is currently deployed on vercel.com (client) and render.com (server).
 
 ## Next Steps
 
