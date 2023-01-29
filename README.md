@@ -86,10 +86,10 @@ The app is currently deployed on Vercel and Render.com.
 Several features of the app have not been implemented yet. The features to be developed are:
 - User Registration and Login using Firebase
 - Previous orders page (client)
-- Change user info page (client)
+- Change registered user info page (client)
 - Add/remove favorite store functionality and page (client)
 - Logout option (client)
 - Implement Stripe and Paypal payment methods (client and server)
-- Validate user (server)
-- Add order on MongoDB (server)
+- Validate registered user (server)
+- Add order on MongoDB, when user is registered (server)
 - Secure backend routes (server)
