@@ -1,14 +1,16 @@
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInAnonymously, signInWithPopup } from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import useFirebase from '../hooks/useFirebase';
+import { AuthUser } from '../types';
 
 // ==================== TYPES ====================
 interface FirebaseContextProps {
   isAnonymousAccount: boolean;
   isNormalAccount: boolean;
-  user: object;
+  connectWithGoogle: () => void;
+  user: AuthUser;
 }
 
 const FirebaseContext = createContext({} as FirebaseContextProps);
@@ -23,10 +25,27 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
   const { isFirebaseInitialized } = useFirebase();
   const [isAnonymousAccount, setIsAnonymousAccount] = useState(false);
   const [isNormalAccount, setIsNormalAccount] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<AuthUser>({
+    uid: '',
+    displayName: '',
+    email: '',
+  });
 
-  // SIGN IN ANONYMOUSLY
+  const connectWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    auth.useDeviceLanguage();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      toast.error(error?.message || 'Something went wrong');
+    }
+  };
+
+  // ADD LISTENER TO AUTH STATE
   useEffect(() => {
+    const auth = getAuth();
+
     const anonymousSignIn = async () => {
       try {
         const auth = getAuth();
@@ -35,16 +54,6 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         toast.error(error?.message || 'Something went wrong');
       }
     };
-    // Create an anonymous account if:
-    // 1.firebase is initialized, 2.no user, 3.no normal account
-    if (isFirebaseInitialized && !user && !isNormalAccount) {
-      anonymousSignIn();
-    }
-  }, [isFirebaseInitialized, user, isNormalAccount]);
-
-  // ADD LISTENER TO AUTH STATE
-  useEffect(() => {
-    const auth = getAuth();
 
     const listener = (newUser: any) => {
       if (newUser) {
@@ -59,9 +68,9 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
           toast.success('You have signed in successfully!');
         }
       } else {
-        setUser({});
         setIsAnonymousAccount(false);
         setIsNormalAccount(false);
+        anonymousSignIn();
       }
     };
 
@@ -73,6 +82,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
       value={{
         isAnonymousAccount,
         isNormalAccount,
+        connectWithGoogle,
         user,
       }}
     >

@@ -1,22 +1,28 @@
 import { FormControl, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
+import { getAuth, signOut } from 'firebase/auth';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { HiSearch } from 'react-icons/hi';
 import { IoMdCloseCircle } from 'react-icons/io';
 import { MdLocationOn } from 'react-icons/md';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
+import { useFirebaseContext } from '../../context/FirebaseContext';
 import { Store } from '../../types';
 import { baseURL } from '../../utilities/server';
 
 function Navbar() {
   const { userInfoState } = useDeliveryContext();
+  const { isNormalAccount } = useFirebaseContext();
   const location = useLocation();
   const [query, setQuery] = useState('');
   const [storesResults, setStoresResults] = useState<Store[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -146,7 +152,7 @@ function Navbar() {
                 <div className="flex flex-col justify-start items-start">
                   <h1 className="text-sm text-greyLight text-center hidden md:block">Διεύθυνση Παράδοσης:</h1>
                   <h1 className="md:text-sm">
-                    {userInfoState?.fullAddress?.address + ' ' + userInfoState?.fullAddress?.number}
+                    {userInfoState?.fullAddress?.address + ' ' + (userInfoState?.fullAddress?.number || '')}
                   </h1>
                 </div>
               </div>
@@ -159,7 +165,22 @@ function Navbar() {
                     <h1 className="text-sm">{userInfoState.lastName}</h1>
                   </div>
                 )}
-                <FaUser className="text-2xl cursor-pointer" />
+                <FaUser
+                  className="text-2xl cursor-pointer"
+                  onClick={async () => {
+                    if (isNormalAccount) {
+                      try {
+                        const auth = getAuth();
+                        await signOut(auth);
+                        navigate('/');
+                        // reload page
+                        window.location.reload();
+                      } catch (error) {
+                        toast.error('Παρουσιάστηκε κάποιο πρόβλημα. Παρακαλώ προσπαθήστε ξανά.');
+                      }
+                    }
+                  }}
+                />
               </div>
             )}
           </div>

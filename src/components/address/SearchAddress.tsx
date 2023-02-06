@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
 import FormControl from '@mui/material/FormControl';
+import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import { BiSearchAlt2 } from 'react-icons/bi';
-import { useDeliveryContext } from '../../context/DeliveryContext';
-import { MdPlace } from 'react-icons/md';
-import GpsInput from './GpsInput';
 import { motion } from 'framer-motion';
-import LoaderSmall from '../LoaderSmall';
+import { useEffect, useState } from 'react';
+import { BiSearchAlt2 } from 'react-icons/bi';
+import { MdPlace } from 'react-icons/md';
+import { useDeliveryContext } from '../../context/DeliveryContext';
 import { baseURL } from '../../utilities/server';
+import LoaderSmall from '../LoaderSmall';
+import GpsInput from './GpsInput';
 
 function SearchAddress() {
   const [newAddress, setNewAddress] = useState('');
@@ -47,7 +47,10 @@ function SearchAddress() {
 
     userInfoDispatch({
       type: 'SET_ADDRESS',
-      payload: fullAddress,
+      payload: {
+        ...fullAddress,
+        confirmed: false,
+      },
     });
     setIsLoading(false);
   };

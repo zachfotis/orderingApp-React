@@ -1,4 +1,4 @@
-import { MdOutlineGpsFixed as GpsIcon, MdArrowForwardIos as ArrowIcon } from 'react-icons/md';
+import { MdArrowForwardIos as ArrowIcon, MdOutlineGpsFixed as GpsIcon } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
 import { baseURL } from '../../utilities/server';
@@ -23,7 +23,10 @@ function GpsInput() {
           if (address) {
             userInfoDispatch({
               type: 'SET_ADDRESS',
-              payload: address,
+              payload: {
+                ...address,
+                confirmed: false,
+              },
             });
           }
           setIsLoading(false);

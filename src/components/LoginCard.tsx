@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { FaFacebookF } from 'react-icons/fa';
 import { FcGoogle, FcHome } from 'react-icons/fc';
 import { MdEmail } from 'react-icons/md';
@@ -9,11 +10,18 @@ import { useFirebaseContext } from '../context/FirebaseContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: boolean) => void }) {
-  const { user } = useFirebaseContext();
+  const { user, isNormalAccount, connectWithGoogle } = useFirebaseContext();
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
   const { setValue } = useLocalStorage('address', '');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isNormalAccount && userInfoState.fullAddress.confirmed) {
+      // navigate and replace the history so that the user can't go back to the login page
+      navigate('/home', { replace: true });
+    }
+  }, [isNormalAccount, userInfoState.fullAddress.confirmed]);
 
   return (
     <motion.div
@@ -34,7 +42,7 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
             <FcHome className="text-4xl" />
             <div className="flex justify-center items-center gap-3">
               <p className="text-base font-[400]">
-                {userInfoState.fullAddress.address + ' ' + userInfoState.fullAddress.number},{' '}
+                {userInfoState.fullAddress.address + ' ' + (userInfoState.fullAddress.number || '')},{' '}
                 {userInfoState.fullAddress.area !== userInfoState.fullAddress.city
                   ? userInfoState.fullAddress.area
                   : ''}{' '}
@@ -44,7 +52,18 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
                 className="text-lg text-red-500 cursor-pointer"
                 onClick={() => {
                   userInfoDispatch({ type: 'DELETE_ADDRESS' });
-                  setValue('');
+                  setValue(
+                    JSON.stringify({
+                      address: '',
+                      number: '',
+                      area: '',
+                      city: '',
+                      postalCode: '',
+                      lat: 0,
+                      lng: 0,
+                      confirmed: false,
+                    }),
+                  );
                   setShowAddressManager(true);
                 }}
               />
@@ -77,8 +96,10 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
           </button>
 
           <button
-            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight cursor-not-allowed"
-            disabled
+            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight"
+            onClick={() => {
+              connectWithGoogle();
+            }}
           >
             <FcGoogle className="text-2xl" />
             <p className="w-full">Σύνδεση με Google</p>

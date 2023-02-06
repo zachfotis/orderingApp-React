@@ -1,12 +1,33 @@
+import { doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { toast } from 'react-toastify';
 import { useDeliveryContext } from '../../context/DeliveryContext';
-import useLocalStorage from '../../hooks/useLocalStorage';
+import { useFirebaseContext } from '../../context/FirebaseContext';
 
 function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
-  const addressStorage = useLocalStorage('address', JSON.stringify(userInfoState.fullAddress));
   const position: [number, number] = [Number(userInfoState.fullAddress.lat), Number(userInfoState.fullAddress.lng)];
+  const { isNormalAccount, user } = useFirebaseContext();
+
+  const handleConfirmAddress = async () => {
+    try {
+      if (isNormalAccount) {
+        const db = getFirestore();
+        const docRef = doc(db, 'users', user.uid);
+        await updateDoc(docRef, {
+          fullAddress: {
+            ...userInfoState.fullAddress,
+            confirmed: true,
+          },
+        });
+      }
+    } catch (err) {
+      toast.error('Something went wrong');
+    } finally {
+      userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
+    }
+  };
 
   return (
     <motion.div
@@ -38,10 +59,7 @@ function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: bo
         <div className="w-full flex flex-col justify-start items-center gap-3">
           <button
             className="bg-yellow text-black w-full py-3 rounded-lg font-[500] text-sm hover:bg-yellowHover disabled:bg-greyLight"
-            onClick={() => {
-              userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
-              addressStorage.setValue(JSON.stringify({ ...userInfoState.fullAddress, confirmed: true }));
-            }}
+            onClick={handleConfirmAddress}
           >
             Επιβεβαίωση Διεύθυνσης
           </button>

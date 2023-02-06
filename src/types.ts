@@ -34,6 +34,21 @@ export type Address = {
   confirmed: boolean;
 };
 
+export type FirestoreUser = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  fullAddress: Address;
+};
+
+export type AuthUser = {
+  uid: string;
+  email: string;
+  displayName: string;
+  isAnonymous?: boolean;
+};
+
 export type MenuItem = {
   name: string;
   description: string;

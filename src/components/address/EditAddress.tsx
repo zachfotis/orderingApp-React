@@ -47,7 +47,10 @@ function EditAddress({ setShowEditAddress }: { setShowEditAddress: (value: boole
 
     userInfoDispatch({
       type: 'SET_ADDRESS',
-      payload: fullAddress,
+      payload: {
+        ...fullAddress,
+        confirmed: false,
+      },
     });
 
     setIsLoading(false);
