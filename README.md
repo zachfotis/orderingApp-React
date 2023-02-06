@@ -47,7 +47,7 @@ npm run dev
 
 ## Backend
 
-The backend of the e-food ordering app is built using Express.js, a Node.js framework for building web applications. It communicates with the frontend through an API and also handles all the data-related operations. The folloning environmental variables are need in order to run the server:
+The backend of the e-food ordering app is built using Express.js, a Node.js framework for building web applications. It communicates with the frontend through an API and also handles all the data-related operations. The following environmental variables are needed in order to run the server:
 
 ```bash
   GOOGLE_PLACES_API_KEY = ''
