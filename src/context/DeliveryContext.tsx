@@ -127,16 +127,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
           lastName,
           email: loggedInUser.email,
           phone: loggedInUser.phoneNumber,
-          fullAddress: {
-            address: '',
-            number: '',
-            area: '',
-            city: '',
-            postalCode: '',
-            lat: 0,
-            lng: 0,
-            confirmed: false,
-          },
+          fullAddress: userInfoState.fullAddress,
         };
 
         await setDoc(docRef, newUser);
@@ -161,7 +152,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
             userInfoDispatch({ type: 'SET_ADDRESS', payload: userInFirestore.fullAddress });
           }
         } else {
-          // TODO: Create user in firestore
+          // Create new user in firestore
           const newUser = await createNewUserInFirestore(user);
           if (newUser) {
             userInfoDispatch({ type: 'SET_FIRST_NAME', payload: newUser.firstName });

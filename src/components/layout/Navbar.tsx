@@ -13,6 +13,8 @@ import { useFirebaseContext } from '../../context/FirebaseContext';
 import { Store } from '../../types';
 import { baseURL } from '../../utilities/server';
 
+import { SlHandbag, SlHome, SlLogin, SlLogout, SlUser } from 'react-icons/sl';
+
 function Navbar() {
   const { userInfoState } = useDeliveryContext();
   const { isNormalAccount } = useFirebaseContext();
@@ -21,6 +23,7 @@ function Navbar() {
   const [storesResults, setStoresResults] = useState<Store[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -69,6 +72,21 @@ function Navbar() {
 
     return () => window.removeEventListener('click', closeSearchResults);
   }, []);
+
+  const handleSignOut = async () => {
+    if (isNormalAccount) {
+      try {
+        const auth = getAuth();
+        await signOut(auth);
+        setIsUserMenuOpen(false);
+        navigate('/');
+        // reload page
+        window.location.reload();
+      } catch (error) {
+        toast.error('Παρουσιάστηκε κάποιο πρόβλημα. Παρακαλώ προσπαθήστε ξανά.');
+      }
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -148,7 +166,7 @@ function Navbar() {
             </div>
             {(!isTablet || (isTablet && !isSearchOpen)) && (
               <div className="flex justify-center items-center gap-2 md:order-1">
-                <MdLocationOn className="text-3xl text-orange-600 hidden md:block" />
+                <MdLocationOn className="text-2xl md:text-3xl text-orange-600" />
                 <div className="flex flex-col justify-start items-start">
                   <h1 className="text-sm text-greyLight text-center hidden md:block">Διεύθυνση Παράδοσης:</h1>
                   <h1 className="md:text-sm">
@@ -158,29 +176,90 @@ function Navbar() {
               </div>
             )}
             {(!isTablet || (isTablet && !isSearchOpen)) && (
-              <div className="flex justify-center items-center gap-3 md:order-3">
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={() => {
+                  setIsUserMenuOpen(!isUserMenuOpen);
+                }}
+                className="relative flex justify-center items-center gap-3 md:order-3"
+                onClick={() => {
+                  setIsUserMenuOpen(!isUserMenuOpen);
+                }}
+              >
                 {userInfoState?.firstName && userInfoState?.lastName && (
-                  <div className="hidden md:flex flex-col justify-start items-end">
-                    <h1 className="text-sm">{userInfoState.firstName}</h1>
+                  <div className="hidden md:flex justify-start items-center gap-2">
+                    <h1 className="text-sm">{userInfoState.firstName[0]}.</h1>
                     <h1 className="text-sm">{userInfoState.lastName}</h1>
                   </div>
                 )}
-                <FaUser
-                  className="text-2xl cursor-pointer"
-                  onClick={async () => {
-                    if (isNormalAccount) {
-                      try {
-                        const auth = getAuth();
-                        await signOut(auth);
-                        navigate('/');
-                        // reload page
-                        window.location.reload();
-                      } catch (error) {
-                        toast.error('Παρουσιάστηκε κάποιο πρόβλημα. Παρακαλώ προσπαθήστε ξανά.');
-                      }
-                    }
-                  }}
-                />
+                <FaUser className="text-2xl cursor-pointer" />
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      className="absolute top-[120%] right-0 bg-white p-1 rounded-md shadow-lg"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <ul className="w-full flex flex-col justify-start items-start gap-1 py-3 px-1">
+                        {!isNormalAccount ? (
+                          <button
+                            className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
+                            onClick={() => {
+                              navigate('/');
+                              setIsUserMenuOpen(false);
+                            }}
+                          >
+                            <SlLogin />
+                            Login
+                          </button>
+                        ) : (
+                          <>
+                            <button
+                              className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
+                              onClick={() => {
+                                navigate('/home');
+                                setIsUserMenuOpen(false);
+                              }}
+                            >
+                              <SlHome />
+                              Home
+                            </button>
+                            <button
+                              className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
+                              onClick={() => {
+                                navigate('/profile');
+                                setIsUserMenuOpen(false);
+                              }}
+                            >
+                              <SlUser />
+                              Profile
+                            </button>
+                            <button
+                              className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
+                              onClick={() => {
+                                navigate('/orders');
+                                setIsUserMenuOpen(false);
+                              }}
+                            >
+                              <SlHandbag />
+                              Orders
+                            </button>
+                            <button
+                              className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
+                              onClick={handleSignOut}
+                            >
+                              <SlLogout />
+                              Logout
+                            </button>
+                          </>
+                        )}
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </div>
