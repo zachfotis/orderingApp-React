@@ -10,7 +10,7 @@ import { useFirebaseContext } from '../context/FirebaseContext';
 import useLocalStorage from '../hooks/useLocalStorage';
 
 function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: boolean) => void }) {
-  const { user, isNormalAccount, connectWithGoogle } = useFirebaseContext();
+  const { user, isNormalAccount, connectWithGoogle, connectWithFacebook } = useFirebaseContext();
   const { userInfoState, userInfoDispatch } = useDeliveryContext();
   const { setValue } = useLocalStorage('address', '');
 
@@ -88,8 +88,10 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
           <p className="w-full text-sm text-left text-greyLight">Σύνδεση ή δημιουργία λογαριασμού</p>
 
           <button
-            className="bg-blue text-white w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center cursor-not-allowed"
-            disabled
+            className="bg-blue text-white w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center"
+            onClick={() => {
+              connectWithFacebook();
+            }}
           >
             <FaFacebookF className="text-2xl" />
             <p className="w-full">Σύνδεση με Facebook</p>

@@ -1,4 +1,11 @@
-import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInAnonymously, signInWithPopup } from 'firebase/auth';
+import {
+  FacebookAuthProvider,
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInAnonymously,
+  signInWithPopup,
+} from 'firebase/auth';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
@@ -10,6 +17,7 @@ interface FirebaseContextProps {
   isAnonymousAccount: boolean;
   isNormalAccount: boolean;
   connectWithGoogle: () => void;
+  connectWithFacebook: () => void;
   user: AuthUser;
 }
 
@@ -29,10 +37,22 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
     uid: '',
     displayName: '',
     email: '',
+    phoneNumber: '',
   });
 
   const connectWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    auth.useDeviceLanguage();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error: any) {
+      toast.error(error?.message || 'Something went wrong');
+    }
+  };
+
+  const connectWithFacebook = async () => {
+    const provider = new FacebookAuthProvider();
     const auth = getAuth();
     auth.useDeviceLanguage();
     try {
@@ -83,6 +103,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
         isAnonymousAccount,
         isNormalAccount,
         connectWithGoogle,
+        connectWithFacebook,
         user,
       }}
     >

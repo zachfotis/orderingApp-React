@@ -126,7 +126,7 @@ function DeliveryProvider({ children }: { children: React.ReactNode }) {
           firstName,
           lastName,
           email: loggedInUser.email,
-          phone: '',
+          phone: loggedInUser.phoneNumber,
           fullAddress: {
             address: '',
             number: '',
