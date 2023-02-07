@@ -44,6 +44,7 @@ export type FirestoreUser = {
 
 export type AuthUser = {
   uid: string;
+  accessToken: string;
   email: string;
   displayName: string;
   phoneNumber: string;
@@ -88,4 +89,12 @@ export type BasketSelectedItem = {
   itemPrice: number;
   quantity: number;
   options: MenuItemsSelected;
+};
+
+export type Order = {
+  _id: string;
+  storeID: string;
+  userUID: string;
+  order: [BasketSelectedItem];
+  orderTotal: number;
 };

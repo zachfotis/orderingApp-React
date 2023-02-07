@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Categories from '../components/store/Categories';
 import Header from '../components/store/Header';
 import Menu from '../components/store/Menu';
@@ -14,6 +14,7 @@ function Store() {
   const { id } = useParams<{ id: string }>();
   const { stores, setActiveStore, showBasket, setShowBasket } = useDeliveryContext();
   const [catalog, setCatalog] = useState<Catalog>({});
+  const location = useLocation();
 
   useEffect(() => {
     const getCatalog = async () => {
@@ -23,7 +24,11 @@ function Store() {
     };
 
     getCatalog();
-    setShowBasket(false);
+    if (location.state && location.state?.isCartOpen) {
+      setShowBasket(true);
+    } else {
+      setShowBasket(false);
+    }
   }, []);
 
   useEffect(() => {

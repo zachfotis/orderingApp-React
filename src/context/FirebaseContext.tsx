@@ -29,6 +29,7 @@ function FirebaseProvider({ children }: { children: React.ReactNode }) {
     displayName: '',
     email: '',
     phoneNumber: '',
+    accessToken: '',
   });
 
   const connectWithGoogle = async () => {

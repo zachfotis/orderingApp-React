@@ -197,13 +197,13 @@ function Navbar() {
                 <AnimatePresence>
                   {isUserMenuOpen && (
                     <motion.div
-                      className="absolute top-[120%] right-0 bg-white p-1 rounded-md shadow-lg"
+                      className="absolute top-[120%] right-0 bg-white py-1 px-2 rounded-md shadow-lg"
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <ul className="w-full flex flex-col justify-start items-start gap-1 py-3 px-1">
+                      <ul className="w-full flex flex-col justify-start items-start gap-1 py-2 px-1">
                         {!isNormalAccount ? (
                           <button
                             className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
@@ -213,7 +213,7 @@ function Navbar() {
                             }}
                           >
                             <SlLogin />
-                            Login
+                            Είσοδος
                           </button>
                         ) : (
                           <>
@@ -225,7 +225,7 @@ function Navbar() {
                               }}
                             >
                               <SlHome />
-                              Home
+                              Αρχική
                             </button>
                             <button
                               className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
@@ -235,7 +235,7 @@ function Navbar() {
                               }}
                             >
                               <SlUser />
-                              Profile
+                              Προφίλ
                             </button>
                             <button
                               className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
@@ -245,14 +245,14 @@ function Navbar() {
                               }}
                             >
                               <SlHandbag />
-                              Orders
+                              Παραγγελίες
                             </button>
                             <button
                               className="py-2 px-5 w-full flex justify-start items-center gap-4 hover:bg-yellowHover cursor-pointer rounded-md"
                               onClick={handleSignOut}
                             >
                               <SlLogout />
-                              Logout
+                              Έξοδος
                             </button>
                           </>
                         )}

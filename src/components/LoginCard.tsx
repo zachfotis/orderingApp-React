@@ -19,6 +19,9 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
     if (isNormalAccount && userInfoState.fullAddress.confirmed) {
       // navigate and replace the history so that the user can't go back to the login page
       navigate('/home', { replace: true });
+    } else if (isNormalAccount && !userInfoState.fullAddress.confirmed) {
+      // show the address manager if the user is logged in but hasn't confirmed his address
+      setShowAddressManager(true);
     }
   }, [isNormalAccount, userInfoState.fullAddress.confirmed]);
 
