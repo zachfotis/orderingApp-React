@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { FaFacebookF } from 'react-icons/fa';
 import { FcGoogle, FcHome } from 'react-icons/fc';
-import { MdEmail } from 'react-icons/md';
 import { RiDeleteBack2Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 import { useDeliveryContext } from '../context/DeliveryContext';
@@ -105,14 +104,6 @@ function LoginCard({ setShowAddressManager }: { setShowAddressManager: (value: b
           >
             <FcGoogle className="text-2xl" />
             <p className="w-full">Σύνδεση με Google</p>
-          </button>
-
-          <button
-            className="bg-white text-black w-full p-3 rounded-lg font-[500] text-sm flex justify-start items-center border border-greyLight cursor-not-allowed"
-            disabled
-          >
-            <MdEmail className="text-2xl" />
-            <p className="w-full">Σύνδεση/Εγγραφή με Email</p>
           </button>
         </div>
 
