@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+import { el } from 'date-fns/esm/locale';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { BsFillBasket2Fill } from 'react-icons/bs';
@@ -5,6 +7,7 @@ import { FaReceipt, FaUserSecret } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import CartIcon from '../assets/icons/empty-cart.png';
 import OrderIcon from '../assets/icons/order.png';
+import Loader from '../components/Loader';
 import { useDeliveryContext } from '../context/DeliveryContext';
 import { useFirebaseContext } from '../context/FirebaseContext';
 import { Order } from '../types';
@@ -14,10 +17,12 @@ function Orders() {
   const { user, isNormalAccount } = useFirebaseContext();
   const { stores, basketDispatch, setShowBasket } = useDeliveryContext();
   const [orders, setOrders] = useState<[Order] | []>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const getOrders = async () => {
+      setIsLoading(true);
       const response = await fetch(baseURL + '/api/orders', {
         method: 'GET',
         headers: {
@@ -31,6 +36,7 @@ function Orders() {
         const orders: [Order] = data.data;
         setOrders(orders);
       }
+      setIsLoading(false);
     };
 
     if (user?.accessToken) {
@@ -110,19 +116,22 @@ function Orders() {
                     alt="logo"
                     className="w-[40px] h-auto"
                   />
-                  <h1 className="font-[500] text-base">{stores.find((store) => store._id === order.storeID)?.title}</h1>
+                  <div className="flex flex-col justify-start items-start gap-1">
+                    <h1 className="font-[500] text-base">
+                      {stores.find((store) => store._id === order.storeID)?.title}
+                    </h1>
+                    <h1 className="font-[400] text-xs text-greyDark">
+                      {format(new Date(order.createdAt), 'LLL d, yyyy - HH:mm', { locale: el })}
+                    </h1>
+                  </div>
                   <button
-                    className="ml-auto"
+                    className="ml-auto flex flex-col justify-start items-center gap-1 cursor-pointer"
                     onClick={() => {
                       handleAddToBasket(order);
                     }}
                   >
-                    <img
-                      src={CartIcon}
-                      alt="Cart"
-                      className="cursor-pointer w-[25px] hover:w-[30px]
-                transition-all duration-300 ease-in-out"
-                    />
+                    <img src={CartIcon} alt="Cart" className="w-[25px]" />
+                    <p className="font-[500] text-xs text-greyDark">Θέλω Ξανά</p>
                   </button>
                 </div>
                 {/* Order Items */}
@@ -158,6 +167,8 @@ function Orders() {
             ))}
           </div>
         </>
+      ) : isLoading ? (
+        <Loader />
       ) : (
         <div className="flex-1 flex flex-col justify-center items-center gap-7 p-5">
           <div className="bg-gray-100 p-7 rounded-full">

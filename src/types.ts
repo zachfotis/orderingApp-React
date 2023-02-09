@@ -97,4 +97,5 @@ export type Order = {
   userUID: string;
   order: [BasketSelectedItem];
   orderTotal: number;
+  createdAt: Date;
 };
