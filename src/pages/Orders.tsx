@@ -116,7 +116,7 @@ function Orders() {
                 transition-transform duration-300 ease-in-out"
               >
                 {/* Order Store */}
-                <div className="w-full flex justify-start items-center gap-5 mb-5 pr-3">
+                <div className="w-full flex justify-start items-center gap-5 mb-5">
                   <img
                     src={baseURL + '/' + stores.find((store) => store._id === order.storeID)?.images?.logo}
                     alt="logo"
