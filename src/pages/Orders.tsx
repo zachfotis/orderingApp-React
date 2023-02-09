@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { BsFillBasket2Fill } from 'react-icons/bs';
 import { FaReceipt, FaUserSecret } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import CartIcon from '../assets/icons/empty-cart.png';
 import OrderIcon from '../assets/icons/order.png';
 import Loader from '../components/Loader';
@@ -23,20 +24,25 @@ function Orders() {
   useEffect(() => {
     const getOrders = async () => {
       setIsLoading(true);
-      const response = await fetch(baseURL + '/api/orders', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${user.accessToken}`,
-        },
-      });
+      try {
+        const response = await fetch(baseURL + '/api/orders', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${user.accessToken}`,
+          },
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        const orders: [Order] = data.data;
-        setOrders(orders);
+        if (data.success) {
+          const orders: [Order] = data.data;
+          setOrders(orders);
+        }
+      } catch (error) {
+        toast.error('Παρουσιάστηκε κάποιο πρόβλημα.');
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     if (user?.accessToken) {
