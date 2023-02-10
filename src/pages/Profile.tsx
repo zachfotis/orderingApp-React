@@ -25,6 +25,13 @@ function Profile() {
         userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
       }
     }
+
+    return () => {
+      if (!userInfoState.fullAddress.confirmed && currentAddress.confirmed) {
+        userInfoDispatch({ type: 'SET_ADDRESS', payload: currentAddress });
+        userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
+      }
+    };
   }, [showAddressManager]);
 
   useEffect(() => {
