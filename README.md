@@ -105,8 +105,8 @@ Several features of the app have not been implemented yet. The features to be de
 - ~~Logout option (client)~~
 - ~~Validate registered user (server)~~
 - ~~Add order on MongoDB, if user is registered (server)~~
-- Change registered user info page (client)
+- ~~Change registered user info page (client)~~
+- ~~Add timestamp to orders (server)~~
+- ~~Secure backend routes (server)~~
 - Add/remove favorite store functionality and page (client)
 - Implement Stripe and Paypal payment methods (client and server)
-- Add timestamp to orders (server)
-- Secure backend routes (server)

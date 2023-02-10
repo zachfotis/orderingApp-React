@@ -51,10 +51,6 @@ function Profile() {
           phone: userInfoState.phone,
           email: userInfoState.email,
         });
-        userInfoDispatch({ type: 'SET_FIRST_NAME', payload: userInfoState.firstName });
-        userInfoDispatch({ type: 'SET_LAST_NAME', payload: userInfoState.lastName });
-        userInfoDispatch({ type: 'SET_PHONE', payload: userInfoState.phone });
-        userInfoDispatch({ type: 'SET_EMAIL', payload: userInfoState.email });
         toast.success('Τα στοιχεία σου αποθηκεύτηκαν');
       }
     } catch (error) {
@@ -199,8 +195,10 @@ function Profile() {
               </div>
               <button
                 className="w-full sm:max-w-[250px] mt-3 flex justify-center items-center gap-2 px-3 py-2 rounded-lg tet-sm md:text-base
-            bg-yellow hover:bg-yellowHover focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent"
+              bg-yellow hover:bg-yellowHover focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-transparent
+                disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleInfoSave}
+                disabled={userInfoState?.isEmailValid && userInfoState?.isPhoneValid ? false : true}
               >
                 <MdCloudUpload className="text-lg md:text-xl" />
                 Αποθήκευση
