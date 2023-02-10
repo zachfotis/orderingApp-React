@@ -8,6 +8,7 @@ import FirebaseProvider from './context/FirebaseContext';
 import Checkout from './pages/Checkout';
 import Home from './pages/Home';
 import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 import Store from './pages/Store';
 import Welcome from './pages/Welcome';
 
@@ -39,6 +40,7 @@ function AnimatedRoutes() {
         <Route path="/store/:id" element={<Store />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </AnimatePresence>
   );

@@ -15,7 +15,7 @@ function Loader({ text = 'Loading...', variant = 'normal' }: LoaderProps) {
   }, []);
 
   return (
-    <div className="h-screen flex flex-col justify-center items-center gap-5">
+    <div className="fixed top-0 left-0 w-full h-screen bg-white flex flex-col justify-center items-center gap-5 z-[1000]">
       <span className={variant}></span>
       <p>{text}</p>
     </div>

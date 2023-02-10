@@ -6,13 +6,14 @@ import { useDeliveryContext } from '../../context/DeliveryContext';
 import { useFirebaseContext } from '../../context/FirebaseContext';
 
 function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: boolean) => void }) {
-  const { userInfoState, userInfoDispatch } = useDeliveryContext();
+  const { userInfoState, userInfoDispatch, setIsLoading } = useDeliveryContext();
   const position: [number, number] = [Number(userInfoState.fullAddress.lat), Number(userInfoState.fullAddress.lng)];
   const { isNormalAccount, user } = useFirebaseContext();
 
   const handleConfirmAddress = async () => {
     try {
       if (isNormalAccount) {
+        setIsLoading(true);
         const db = getFirestore();
         const docRef = doc(db, 'users', user.uid);
         await updateDoc(docRef, {
@@ -26,6 +27,7 @@ function ConfirmAddress({ setShowEditAddress }: { setShowEditAddress: (value: bo
       toast.error('Something went wrong');
     } finally {
       userInfoDispatch({ type: 'SET_ADDRESS_CONFIRMED', payload: true });
+      setIsLoading(false);
     }
   };
 

@@ -41,7 +41,11 @@ function Welcome() {
         {!showAddressManager && <LoginCard setShowAddressManager={setShowAddressManager} />}
       </AnimatePresence>
       <AnimatePresence>
-        {showAddressManager && <AddressManager setShowAddressManager={setShowAddressManager} />}
+        {showAddressManager && (
+          <div className="fixed w-full md:max-w-[50%] h-full top-0 left-0 z-50">
+            <AddressManager setShowAddressManager={setShowAddressManager} />
+          </div>
+        )}
       </AnimatePresence>
     </motion.section>
   );

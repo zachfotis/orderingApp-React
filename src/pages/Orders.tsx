@@ -104,14 +104,14 @@ function Orders() {
       ) : orders.length > 0 ? (
         <>
           <div className="flex flex-col justify-start items-center my-5 gap-3">
-            <img src={OrderIcon} alt="order logo" className="w-[50px] md:w-[70px]" />
-            <h1 className="text-xl md:text-2xl">Οι Παραγγελίες σου</h1>
+            <img src={OrderIcon} alt="order logo" className="w-[50px]" />
+            <h1 className="text-xl md:text-2xl">Οι παραγγελίες σου</h1>
           </div>
           <div className="w-full mt-5 flex flex-col justify-start items-start gap-10">
             {orders.map((order) => (
               <div
                 key={order._id}
-                className="flex-1 mx-auto w-full h-full overflow-y-auto shadow-md rounded-lg p-5
+                className="flex-1 mx-auto w-full h-full overflow-y-auto shadow-md rounded-lg p-5 group
                 hover:outline-dashed hover:outline-2 hover:outline-greyLight hover:scale-[102%] hover:shadow-lg
                 transition-transform duration-300 ease-in-out"
               >
@@ -131,7 +131,10 @@ function Orders() {
                     </h1>
                   </div>
                   <button
-                    className="ml-auto flex flex-col justify-start items-center gap-1 cursor-pointer"
+                    className="ml-auto flex lg:opacity-0 flex-col justify-start items-center gap-1 cursor-pointer 
+                    group-hover:opacity-100 hover:scale-110
+                    transition-all duration-300 ease-in-out
+                    "
                     onClick={() => {
                       handleAddToBasket(order);
                     }}
